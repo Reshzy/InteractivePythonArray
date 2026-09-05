@@ -1,28 +1,81 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   gsap,
   registerGsapPlugins,
   useGSAP,
 } from "@/lib/animations/gsap-client";
-import {
-  DEMO_LIST_VALUES,
-  DEMO_VARIABLE_NAME,
-} from "@/data/playground-demo";
+import { usePlaygroundStore } from "@/store/playground-store";
 
 import { CodePanel } from "./CodePanel";
+import { HistoryPanel } from "./HistoryPanel";
 import { ListVisualizer } from "./ListVisualizer";
-import { MethodControls, RunAppendButton } from "./MethodControls";
+import { MethodControls } from "./MethodControls";
 import { MethodNavigation } from "./MethodNavigation";
 import { PlaygroundToolbar } from "./PlaygroundToolbar";
 import { ResultPanel } from "./ResultPanel";
 
 registerGsapPlugins();
 
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return (
+    target.closest("input, textarea, select, [contenteditable=true]") !== null
+  );
+}
+
 export function Playground() {
   const playgroundRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    void Promise.resolve(usePlaygroundStore.persist.rehydrate()).finally(() => {
+      usePlaygroundStore.getState().setHasHydrated(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const isMod = event.metaKey || event.ctrlKey;
+      if (!isMod) {
+        return;
+      }
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        usePlaygroundStore.getState().executeOperation();
+        return;
+      }
+
+      if (isEditableTarget(event.target)) {
+        return;
+      }
+
+      if (event.key === "z" && event.shiftKey) {
+        event.preventDefault();
+        usePlaygroundStore.getState().redo();
+        return;
+      }
+
+      if (event.key === "y") {
+        event.preventDefault();
+        usePlaygroundStore.getState().redo();
+        return;
+      }
+
+      if (event.key === "z") {
+        event.preventDefault();
+        usePlaygroundStore.getState().undo();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   useGSAP(
     () => {
@@ -67,17 +120,14 @@ export function Playground() {
       >
         <PlaygroundToolbar />
 
-        <ListVisualizer
-          variableName={DEMO_VARIABLE_NAME}
-          values={DEMO_LIST_VALUES}
-        />
+        <ListVisualizer />
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start">
           <div className="flex flex-col gap-4">
             <MethodNavigation />
             <MethodControls />
-            <RunAppendButton />
             <ResultPanel />
+            <HistoryPanel />
           </div>
           <div className="order-last lg:order-first">
             <CodePanel />

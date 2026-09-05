@@ -87,6 +87,18 @@ const REVERSE_ARGUMENT: ArgumentDefinition = {
   description: "When True, sort from largest to smallest.",
 };
 
+export function isMethodId(value: unknown): value is MethodId {
+  return typeof value === "string" && METHODS.some((method) => method.id === value);
+}
+
+export function getMethod(id: MethodId): MethodDefinition {
+  const method = METHODS.find((item) => item.id === id);
+  if (!method) {
+    throw new Error(`Unknown method: ${id}`);
+  }
+  return method;
+}
+
 export const METHODS: readonly MethodDefinition[] = [
   {
     id: "len",

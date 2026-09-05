@@ -1,6 +1,6 @@
 # Python list operation engine (V1)
 
-Pure TypeScript simulation of beginner Python list behavior. Later phases consume this layer for UI, history, and animation. It does not execute Python and is not wired to the playground yet.
+Pure TypeScript simulation of beginner Python list behavior. The playground store calls `executeOperation()` for Run, history, and generated code. It does not execute real Python.
 
 ## PythonValue model
 

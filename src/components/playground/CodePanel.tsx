@@ -5,14 +5,26 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { DEMO_PYTHON_CODE } from "@/data/playground-demo";
+import { buildPlaygroundSource } from "@/lib/playground/display";
+import { usePlaygroundStore } from "@/store/playground-store";
 
 export function CodePanel() {
   const [copied, setCopied] = useState(false);
+  const variableName = usePlaygroundStore((state) => state.variableName);
+  const list = usePlaygroundStore((state) => state.list);
+  const selectedMethod = usePlaygroundStore((state) => state.selectedMethod);
+  const operationArguments = usePlaygroundStore((state) => state.arguments);
+
+  const source = buildPlaygroundSource({
+    variableName,
+    list,
+    method: selectedMethod,
+    arguments: operationArguments,
+  });
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(DEMO_PYTHON_CODE);
+      await navigator.clipboard.writeText(source);
       setCopied(true);
       toast.success("Python code copied.");
       window.setTimeout(() => setCopied(false), 1600);
@@ -47,7 +59,7 @@ export function CodePanel() {
         </Button>
       </div>
       <pre className="flex-1 overflow-x-auto p-4 font-mono text-sm leading-7">
-        <code>{DEMO_PYTHON_CODE}</code>
+        <code>{source}</code>
       </pre>
     </section>
   );

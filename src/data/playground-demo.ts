@@ -1,23 +1,27 @@
 export const DEMO_VARIABLE_NAME = "fruits";
 
-export const DEMO_LIST_VALUES = ["apple", "banana", "orange"] as const;
-
 export const DEMO_SELECTED_METHOD_ID = "append";
 
 export const DEMO_APPEND_VALUE = "mango";
 
-export const DEMO_PYTHON_CODE = `${DEMO_VARIABLE_NAME} = ["apple", "banana", "orange"]
+export const ANIMATION_SPEEDS = [0.5, 1, 1.5, 2] as const;
 
-${DEMO_VARIABLE_NAME}.append("mango")`;
+export type AnimationSpeed = (typeof ANIMATION_SPEEDS)[number];
 
-export const PRESET_OPTIONS = [
-  { label: "Fruits", value: "fruits" },
-  { label: "Numbers", value: "numbers" },
-  { label: "Duplicates", value: "duplicates" },
-  { label: "Mixed values", value: "mixed" },
-  { label: "Empty list", value: "empty" },
+export const DEFAULT_ANIMATION_SPEED: AnimationSpeed = 1;
+
+export const ANIMATION_SPEED_OPTIONS = [
+  { label: "0.5x", value: 0.5 },
+  { label: "1x", value: 1 },
+  { label: "1.5x", value: 1.5 },
+  { label: "2x", value: 2 },
 ] as const;
 
-export const ANIMATION_SPEEDS = ["0.5x", "1x", "1.5x", "2x"] as const;
+export function isAnimationSpeed(value: unknown): value is AnimationSpeed {
+  return ANIMATION_SPEEDS.some((speed) => speed === value);
+}
 
-export const DEFAULT_ANIMATION_SPEED = "1x";
+export function animationSpeedLabel(speed: AnimationSpeed): string {
+  const option = ANIMATION_SPEED_OPTIONS.find((item) => item.value === speed);
+  return option?.label ?? `${speed}x`;
+}

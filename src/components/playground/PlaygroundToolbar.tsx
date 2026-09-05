@@ -1,6 +1,6 @@
 "use client";
 
-import { RotateCcwIcon, Undo2Icon } from "lucide-react";
+import { Redo2Icon, RotateCcwIcon, Undo2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,24 +13,32 @@ import {
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  ANIMATION_SPEEDS,
-  DEFAULT_ANIMATION_SPEED,
-  PRESET_OPTIONS,
+  ANIMATION_SPEED_OPTIONS,
+  isAnimationSpeed,
 } from "@/data/playground-demo";
-
-const laterPhaseHint = "Available in a later phase";
-
-const presetItems = PRESET_OPTIONS.map((preset) => ({
-  label: preset.label,
-  value: preset.value,
-}));
+import { PRESET_SELECT_ITEMS, isPresetId } from "@/data/presets";
+import {
+  canRedo,
+  canUndo,
+  usePlaygroundStore,
+} from "@/store/playground-store";
 
 export function PlaygroundToolbar() {
+  const selectedPreset = usePlaygroundStore((state) => state.selectedPreset);
+  const animationSpeed = usePlaygroundStore((state) => state.animationSpeed);
+  const history = usePlaygroundStore((state) => state.history);
+  const historyIndex = usePlaygroundStore((state) => state.historyIndex);
+  const loadPreset = usePlaygroundStore((state) => state.loadPreset);
+  const undo = usePlaygroundStore((state) => state.undo);
+  const redo = usePlaygroundStore((state) => state.redo);
+  const reset = usePlaygroundStore((state) => state.reset);
+  const setAnimationSpeed = usePlaygroundStore(
+    (state) => state.setAnimationSpeed,
+  );
+
+  const undoEnabled = canUndo({ historyIndex });
+  const redoEnabled = canRedo({ history, historyIndex });
+
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <h2
@@ -41,16 +49,24 @@ export function PlaygroundToolbar() {
       </h2>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Select items={presetItems} defaultValue="fruits" disabled>
+        <Select
+          items={PRESET_SELECT_ITEMS}
+          value={selectedPreset}
+          onValueChange={(value) => {
+            if (isPresetId(value)) {
+              loadPreset(value);
+            }
+          }}
+        >
           <SelectTrigger
             aria-label="List preset"
             className="min-h-11 min-w-36"
           >
-            <SelectValue />
+            <SelectValue placeholder="Preset" />
           </SelectTrigger>
           <SelectContent alignItemWithTrigger={false}>
             <SelectGroup>
-              {presetItems.map((preset) => (
+              {PRESET_SELECT_ITEMS.map((preset) => (
                 <SelectItem key={preset.value} value={preset.value}>
                   {preset.label}
                 </SelectItem>
@@ -59,51 +75,63 @@ export function PlaygroundToolbar() {
           </SelectContent>
         </Select>
 
-        <DeferredActionButton label="Undo" icon={Undo2Icon} />
-        <DeferredActionButton label="Reset" icon={RotateCcwIcon} />
+        <Button
+          type="button"
+          variant="outline"
+          className="min-h-11"
+          onClick={undo}
+          disabled={!undoEnabled}
+          aria-label="Undo"
+        >
+          <Undo2Icon data-icon="inline-start" />
+          Undo
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="min-h-11"
+          onClick={redo}
+          disabled={!redoEnabled}
+          aria-label="Redo"
+        >
+          <Redo2Icon data-icon="inline-start" />
+          Redo
+        </Button>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="min-h-11"
+          onClick={reset}
+          aria-label="Reset playground"
+        >
+          <RotateCcwIcon data-icon="inline-start" />
+          Reset
+        </Button>
 
         <ToggleGroup
-          defaultValue={[DEFAULT_ANIMATION_SPEED]}
+          value={[String(animationSpeed)]}
+          onValueChange={(next) => {
+            const selected = Number(next[0]);
+            if (isAnimationSpeed(selected)) {
+              setAnimationSpeed(selected);
+            }
+          }}
           className="min-h-11"
           aria-label="Animation speed"
         >
-          {ANIMATION_SPEEDS.map((speed) => (
+          {ANIMATION_SPEED_OPTIONS.map((speed) => (
             <ToggleGroupItem
-              key={speed}
-              value={speed}
+              key={speed.value}
+              value={String(speed.value)}
               className="min-h-11 min-w-11 px-2.5 font-mono text-xs"
             >
-              {speed}
+              {speed.label}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
       </div>
     </div>
-  );
-}
-
-function DeferredActionButton({
-  label,
-  icon: Icon,
-}: {
-  label: string;
-  icon: typeof Undo2Icon;
-}) {
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            variant="outline"
-            className="min-h-11"
-            aria-disabled="true"
-          />
-        }
-      >
-        <Icon data-icon="inline-start" />
-        {label}
-      </TooltipTrigger>
-      <TooltipContent>{laterPhaseHint}</TooltipContent>
-    </Tooltip>
   );
 }
