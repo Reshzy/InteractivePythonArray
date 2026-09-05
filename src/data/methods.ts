@@ -1,3 +1,5 @@
+import type { MethodId } from "@/lib/python/types";
+
 export type MethodCategory =
   | "builtin"
   | "add"
@@ -6,12 +8,31 @@ export type MethodCategory =
   | "reorder"
   | "utility";
 
+export type ArgumentKind = "value" | "index" | "values" | "boolean";
+
+export type ArgumentDefinition = {
+  name: string;
+  label: string;
+  kind: ArgumentKind;
+  required: boolean;
+  description: string;
+};
+
+export type MethodDifficulty = "beginner" | "intermediate";
+
 export type MethodDefinition = {
-  id: string;
+  id: MethodId;
   label: string;
   category: MethodCategory;
   syntax: string;
   shortDescription: string;
+  explanation: string;
+  mutates: boolean;
+  returnType: string;
+  difficulty: MethodDifficulty;
+  argumentSchema: ArgumentDefinition[];
+  commonMistakes?: string[];
+  comparisonWith?: string[];
 };
 
 export const METHOD_CATEGORIES: readonly {
@@ -26,6 +47,46 @@ export const METHOD_CATEGORIES: readonly {
   { id: "utility", label: "Utility" },
 ] as const;
 
+const VALUE_ARGUMENT: ArgumentDefinition = {
+  name: "value",
+  label: "Value",
+  kind: "value",
+  required: true,
+  description: "The Python value to use with this operation.",
+};
+
+const INDEX_ARGUMENT: ArgumentDefinition = {
+  name: "index",
+  label: "Index",
+  kind: "index",
+  required: true,
+  description: "The list position to use. Negative indices count from the end.",
+};
+
+const OPTIONAL_INDEX_ARGUMENT: ArgumentDefinition = {
+  name: "index",
+  label: "Index",
+  kind: "index",
+  required: false,
+  description: "Optional position to remove. Defaults to the last item.",
+};
+
+const VALUES_ARGUMENT: ArgumentDefinition = {
+  name: "values",
+  label: "Items",
+  kind: "values",
+  required: true,
+  description: "The items to add one by one from another list.",
+};
+
+const REVERSE_ARGUMENT: ArgumentDefinition = {
+  name: "reverse",
+  label: "Reverse",
+  kind: "boolean",
+  required: false,
+  description: "When True, sort from largest to smallest.",
+};
+
 export const METHODS: readonly MethodDefinition[] = [
   {
     id: "len",
@@ -33,6 +94,28 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "builtin",
     syntax: "len(list)",
     shortDescription: "Returns the number of items in a list.",
+    explanation: "len() is a built-in. It counts the items and leaves the list unchanged.",
+    mutates: false,
+    returnType: "int",
+    difficulty: "beginner",
+    argumentSchema: [],
+  },
+  {
+    id: "sorted",
+    label: "sorted()",
+    category: "builtin",
+    syntax: "sorted(list)",
+    shortDescription: "Returns a new sorted list without changing the original.",
+    explanation:
+      "sorted() builds a new ordered list. The original list stays the same.",
+    mutates: false,
+    returnType: "list",
+    difficulty: "intermediate",
+    argumentSchema: [REVERSE_ARGUMENT],
+    commonMistakes: [
+      "sorted() does not change the original list. Assign the result if you need it.",
+    ],
+    comparisonWith: ["sort"],
   },
   {
     id: "append",
@@ -40,6 +123,15 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "add",
     syntax: "list.append(value)",
     shortDescription: "Adds one item to the end of a list.",
+    explanation: "append() adds a single value to the end and returns None.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "beginner",
+    argumentSchema: [VALUE_ARGUMENT],
+    commonMistakes: [
+      "append() adds one item. Use extend() to add each item from another list.",
+    ],
+    comparisonWith: ["extend"],
   },
   {
     id: "extend",
@@ -47,6 +139,16 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "add",
     syntax: "list.extend(iterable)",
     shortDescription: "Adds each item from another list.",
+    explanation:
+      "extend() walks another list and appends each value individually.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "beginner",
+    argumentSchema: [VALUES_ARGUMENT],
+    commonMistakes: [
+      "extend() is not the same as append(). append() would add the whole list as one item.",
+    ],
+    comparisonWith: ["append"],
   },
   {
     id: "insert",
@@ -54,6 +156,12 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "add",
     syntax: "list.insert(index, value)",
     shortDescription: "Inserts an item at a chosen index.",
+    explanation:
+      "insert() places a value at a position. Items at and after that index shift right.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "intermediate",
+    argumentSchema: [INDEX_ARGUMENT, VALUE_ARGUMENT],
   },
   {
     id: "remove",
@@ -61,6 +169,16 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "remove",
     syntax: "list.remove(value)",
     shortDescription: "Removes the first matching value.",
+    explanation:
+      "remove() scans from the left and deletes only the first matching value.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "beginner",
+    argumentSchema: [VALUE_ARGUMENT],
+    commonMistakes: [
+      "remove() needs a matching value. Use pop() if you know the index instead.",
+    ],
+    comparisonWith: ["pop"],
   },
   {
     id: "pop",
@@ -68,6 +186,13 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "remove",
     syntax: "list.pop(index)",
     shortDescription: "Removes an item by index and returns it.",
+    explanation:
+      "pop() removes an item by index (the last item by default) and returns that value.",
+    mutates: true,
+    returnType: "item",
+    difficulty: "beginner",
+    argumentSchema: [OPTIONAL_INDEX_ARGUMENT],
+    comparisonWith: ["remove"],
   },
   {
     id: "clear",
@@ -75,6 +200,11 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "remove",
     syntax: "list.clear()",
     shortDescription: "Removes every item from the list.",
+    explanation: "clear() empties the list in place and returns None.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "beginner",
+    argumentSchema: [],
   },
   {
     id: "count",
@@ -82,6 +212,12 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "search",
     syntax: "list.count(value)",
     shortDescription: "Counts how many times a value appears.",
+    explanation: "count() scans the whole list and returns how many items match.",
+    mutates: false,
+    returnType: "int",
+    difficulty: "beginner",
+    argumentSchema: [VALUE_ARGUMENT],
+    comparisonWith: ["index"],
   },
   {
     id: "index",
@@ -89,6 +225,16 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "search",
     syntax: "list.index(value)",
     shortDescription: "Returns the first index of a value.",
+    explanation:
+      "index() scans from the left and returns the first matching position.",
+    mutates: false,
+    returnType: "int",
+    difficulty: "beginner",
+    argumentSchema: [VALUE_ARGUMENT],
+    commonMistakes: [
+      "index() raises ValueError if the value is not in the list.",
+    ],
+    comparisonWith: ["count"],
   },
   {
     id: "reverse",
@@ -96,6 +242,11 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "reorder",
     syntax: "list.reverse()",
     shortDescription: "Reverses the list in place.",
+    explanation: "reverse() reorders the existing items from last to first.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "beginner",
+    argumentSchema: [],
   },
   {
     id: "sort",
@@ -103,6 +254,16 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "reorder",
     syntax: "list.sort()",
     shortDescription: "Sorts the list in place.",
+    explanation:
+      "sort() reorders the current list. Mixed types that Python cannot compare produce a TypeError.",
+    mutates: true,
+    returnType: "None",
+    difficulty: "intermediate",
+    argumentSchema: [REVERSE_ARGUMENT],
+    commonMistakes: [
+      "sort() changes the list and returns None. Use sorted() to keep the original.",
+    ],
+    comparisonWith: ["sorted"],
   },
   {
     id: "copy",
@@ -110,6 +271,15 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "utility",
     syntax: "list.copy()",
     shortDescription: "Creates a new list with the same items.",
+    explanation:
+      "copy() creates a new list with the same values. This playground uses a shallow-copy educational model.",
+    mutates: false,
+    returnType: "list",
+    difficulty: "intermediate",
+    argumentSchema: [],
+    commonMistakes: [
+      "Assigning another_name = items does not copy the list. Both names would refer to the same list.",
+    ],
+    comparisonWith: ["assignment"],
   },
-] as const;
-
+];
