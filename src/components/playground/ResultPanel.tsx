@@ -29,7 +29,7 @@ export function ResultPanel() {
       ? buildResultAnnouncement(lastResult, list.length)
       : isAnimating
         ? "The list operation is playing."
-        : `${method.label} is ready to run.`;
+        : "";
 
   const listChanged = showResult && lastResult
     ? lastResult.mutates && !lastResult.error
@@ -64,7 +64,7 @@ export function ResultPanel() {
         )}
       </div>
 
-      <p className="sr-only" aria-live="polite">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {announcement}
       </p>
 

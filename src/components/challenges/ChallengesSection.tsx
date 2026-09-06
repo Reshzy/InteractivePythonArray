@@ -140,7 +140,7 @@ export function ChallengesSection() {
       className="scroll-mt-20 mx-auto w-full max-w-6xl px-4 py-12 pb-16"
     >
       <div className="mb-6 flex max-w-2xl flex-col gap-2">
-        <h2 id="challenges-heading" className="text-xl font-medium tracking-tight">
+        <h2 id="challenges-heading" className="text-[1.65rem] font-medium tracking-tight">
           Challenges
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">

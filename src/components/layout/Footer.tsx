@@ -10,7 +10,7 @@ export function Footer() {
           Made by kuya Rodge{" "}
           <span
             aria-hidden="true"
-            className="inline-block origin-center transition-[color,transform] group-hover:scale-110 group-hover:text-primary motion-reduce:transition-colors motion-reduce:group-hover:scale-100"
+            className="inline-block origin-center transition-transform group-hover:scale-110 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
           >
             &lt;3
           </span>

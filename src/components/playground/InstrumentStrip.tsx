@@ -43,65 +43,80 @@ export function InstrumentStrip() {
       className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-end md:justify-between"
     >
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:flex-wrap md:items-end">
-      <Select
-        items={PRESET_SELECT_ITEMS}
-        value={selectedPreset}
-        onValueChange={(value) => {
-          if (isPresetId(value)) {
-            loadPreset(value);
-          }
-        }}
-      >
-        <SelectTrigger aria-label="List preset" className="min-h-11 min-w-32">
-          <SelectValue placeholder="Preset" />
-        </SelectTrigger>
-        <SelectContent alignItemWithTrigger={false}>
-          <SelectGroup>
-            {PRESET_SELECT_ITEMS.map((preset) => (
-              <SelectItem key={preset.value} value={preset.value}>
-                {preset.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+        <Select
+          items={PRESET_SELECT_ITEMS}
+          value={selectedPreset}
+          onValueChange={(value) => {
+            if (isPresetId(value)) {
+              loadPreset(value);
+            }
+          }}
+        >
+          <SelectTrigger aria-label="List preset" className="min-h-11 min-w-32">
+            <SelectValue placeholder="Preset" />
+          </SelectTrigger>
+          <SelectContent alignItemWithTrigger={false}>
+            <SelectGroup>
+              {PRESET_SELECT_ITEMS.map((preset) => (
+                <SelectItem key={preset.value} value={preset.value}>
+                  {preset.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
-      <Select
-        items={METHOD_ITEMS}
-        value={selectedMethod}
-        onValueChange={(value) => {
-          if (isMethodId(value)) {
-            setSelectedMethod(value);
-          }
-        }}
-      >
-        <SelectTrigger aria-label="List method" className="min-h-11 min-w-36 font-mono">
-          <SelectValue placeholder="Method" />
-        </SelectTrigger>
-        <SelectContent alignItemWithTrigger={false}>
-          <SelectGroup>
-            {METHOD_ITEMS.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+        <Select
+          items={METHOD_ITEMS}
+          value={selectedMethod}
+          onValueChange={(value) => {
+            if (isMethodId(value)) {
+              setSelectedMethod(value);
+            }
+          }}
+        >
+          <SelectTrigger aria-label="List method" className="min-h-11 min-w-36 font-mono">
+            <SelectValue placeholder="Method" />
+          </SelectTrigger>
+          <SelectContent alignItemWithTrigger={false}>
+            <SelectGroup>
+              {METHOD_ITEMS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
-      <MethodArgumentFields layout="strip" />
+        <MethodArgumentFields layout="strip" />
       </div>
 
-      <Button
-        type="button"
-        className="min-h-12 min-w-28 px-6 text-base shadow-[0_8px_20px_-8px_color-mix(in_oklab,var(--primary)_70%,transparent)]"
-        onClick={execute}
-        disabled={runLocked}
-      >
-        <PlayIcon data-icon="inline-start" />
-        Run
-        <span className="sr-only">{` ${method.label}`}</span>
-      </Button>
+      <div className="flex flex-col items-stretch gap-1 md:items-end">
+        <Button
+          type="button"
+          className="min-h-12 min-w-28 px-6 text-base shadow-[0_8px_20px_-8px_color-mix(in_oklab,var(--primary)_70%,transparent)]"
+          onClick={execute}
+          disabled={runLocked}
+        >
+          <PlayIcon data-icon="inline-start" />
+          Run
+          <span className="sr-only">{` ${method.label}`}</span>
+        </Button>
+        <p className="text-center text-xs text-muted-foreground">
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Ctrl
+          </kbd>
+          {" / "}
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Cmd
+          </kbd>
+          {" + "}
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Enter
+          </kbd>
+        </p>
+      </div>
     </div>
   );
 }

@@ -221,7 +221,7 @@ export function ListVisualizer({
       data-list-visualizer
       data-xray={xRayMode ? "true" : "false"}
       data-visualizer-error={visualizerError ? "true" : "false"}
-      aria-labelledby="list-visualizer-heading"
+      aria-label="List"
       className={cn(
         "flex min-h-[46vh] flex-col justify-center py-4 md:min-h-[52vh]",
         visualizerError && "rounded-xl outline-2 outline-destructive/50",
@@ -252,16 +252,13 @@ export function ListVisualizer({
         {scanCount !== null ? (
           <p
             data-scan-count
-            className="rounded-md bg-primary/10 px-2 py-1 font-mono text-sm font-medium text-primary"
+            className="rounded-md bg-primary/10 px-2 py-1 font-mono text-sm font-medium text-foreground"
           >
             Count: {scanCount}
           </p>
         ) : null}
       </div>
 
-      <h3 id="list-visualizer-heading" className="sr-only">
-        {variableName}
-      </h3>
       {xRayMode ? (
         <p className="sr-only">
           {copyDescription ?? xray.description}

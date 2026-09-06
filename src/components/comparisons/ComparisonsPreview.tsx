@@ -10,7 +10,7 @@ export function ComparisonsPreview() {
       <div className="mb-6 max-w-2xl">
         <h2
           id="comparisons-heading"
-          className="text-xl font-medium tracking-tight"
+          className="text-[1.65rem] font-medium tracking-tight"
         >
           Comparisons
         </h2>

@@ -2,7 +2,6 @@
 
 import { getMethod } from "@/data/methods";
 import {
-  buildResultAnnouncement,
   formatReturnValue,
   previewOperationCode,
 } from "@/lib/playground/display";
@@ -36,20 +35,11 @@ export function OperationCaption() {
         ? "…"
         : method.returnType;
 
-  const announcement = showResult && lastResult
-    ? buildResultAnnouncement(lastResult, list.length)
-    : isAnimating
-      ? "The list operation is playing."
-      : `${method.label} is ready to run.`;
-
   return (
     <p
       data-operation-caption
       className="min-h-11 font-mono text-sm text-foreground md:text-base"
     >
-      <span className="sr-only" aria-live="polite">
-        {announcement}
-      </span>
       <span>{code}</span>
       <span className="text-muted-foreground">
         {showResult && lastResult?.error

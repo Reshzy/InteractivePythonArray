@@ -30,6 +30,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
+  const HeadingTag = headingLevel;
   const playgroundRef = useRef<HTMLElement>(null);
   const playback = useListPlayback(playgroundRef);
 
@@ -106,6 +107,9 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
         data-playground-shell
         className="mx-auto flex w-full max-w-6xl flex-col gap-6"
       >
+        <HeadingTag id="playground-heading" className="sr-only">
+          Python List Playground
+        </HeadingTag>
         <ListVisualizer
           displayList={playback.displayList}
           incoming={playback.incoming}
@@ -121,7 +125,7 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
         <InstrumentStrip />
         <OperationCaption />
         <StepControls />
-        <PlaygroundToolbar headingLevel={headingLevel} />
+        <PlaygroundToolbar />
         <ResultPanel />
         <HistoryPanel />
       </div>

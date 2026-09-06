@@ -69,7 +69,7 @@ export function ListCell({
         <>
           <div
             data-cell-body
-            className="flex min-h-28 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-5 font-mono text-lg shadow-[0_10px_24px_-18px_rgb(23_23_23_/_45%)] md:min-h-32 md:text-xl"
+            className="flex min-h-28 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-5 font-mono text-lg shadow-[0_10px_24px_-18px_color-mix(in_oklab,var(--foreground)_45%,transparent)] md:min-h-32 md:text-xl"
           >
             {formatPythonValue(item.value)}
           </div>

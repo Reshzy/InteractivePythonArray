@@ -21,7 +21,7 @@ export function HistoryPanel() {
           Run an operation to build a history of list changes.
         </p>
       ) : (
-        <ol className="flex max-h-56 flex-col gap-1 overflow-y-auto font-mono text-xs">
+        <ol className="flex max-h-56 flex-col gap-1 overflow-auto font-mono text-xs">
           {history.map((entry, index) => {
             const isCurrent = index === historyIndex;
             const isFuture = index > historyIndex;
@@ -31,7 +31,7 @@ export function HistoryPanel() {
                 key={entry.id}
                 aria-current={isCurrent ? "step" : undefined}
                 className={cn(
-                  "rounded-md px-2 py-1.5",
+                  "min-w-0 rounded-md px-2 py-1.5 break-all",
                   isCurrent && "bg-primary/10 text-foreground",
                   isFuture && "text-muted-foreground",
                   !isCurrent && !isFuture && "text-foreground",

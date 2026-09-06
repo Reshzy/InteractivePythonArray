@@ -51,12 +51,7 @@ function ToolbarTip({
   );
 }
 
-export function PlaygroundToolbar({
-  headingLevel = "h2",
-}: {
-  headingLevel?: "h1" | "h2";
-}) {
-  const HeadingTag = headingLevel;
+export function PlaygroundToolbar() {
   const animationSpeed = usePlaygroundStore((state) => state.animationSpeed);
   const undoEnabled = usePlaygroundStore((state) => canUndo(state));
   const redoEnabled = usePlaygroundStore((state) => canRedo(state));
@@ -96,26 +91,18 @@ export function PlaygroundToolbar({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex min-w-0 flex-col gap-2">
-        <HeadingTag id="playground-heading" className="sr-only">
-          Python List Playground
-        </HeadingTag>
-        {activeChallenge ? (
-          <Link
-            href="/#challenges"
-            className="inline-flex w-fit min-h-11 items-center gap-2 rounded-lg"
-            aria-label={`Practice challenge: ${activeChallenge.title}. Back to challenges.`}
-          >
-            <Badge>Practice</Badge>
-            <span className="truncate text-sm text-muted-foreground">
-              {activeChallenge.title}
-            </span>
-          </Link>
-        ) : null}
-        <p className="sr-only" aria-live="polite">
-          {shareMessage}
-        </p>
-      </div>
+      {activeChallenge ? (
+        <Link
+          href="/#challenges"
+          className="inline-flex w-fit min-h-11 items-center gap-2 rounded-lg"
+          aria-label={`Practice challenge: ${activeChallenge.title}. Back to challenges.`}
+        >
+          <Badge>Practice</Badge>
+          <span className="truncate text-sm text-muted-foreground">
+            {activeChallenge.title}
+          </span>
+        </Link>
+      ) : null}
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
@@ -171,7 +158,7 @@ export function PlaygroundToolbar({
               title={undoLabel}
             >
               <Undo2Icon data-icon="inline-start" />
-              <span className="hidden md:inline">Undo</span>
+              Undo
             </Button>
           </ToolbarTip>
 
@@ -186,7 +173,7 @@ export function PlaygroundToolbar({
               title={redoLabel}
             >
               <Redo2Icon data-icon="inline-start" />
-              <span className="hidden md:inline">Redo</span>
+              Redo
             </Button>
           </ToolbarTip>
 
@@ -200,7 +187,7 @@ export function PlaygroundToolbar({
               title="Reset playground"
             >
               <RotateCcwIcon data-icon="inline-start" />
-              <span className="hidden md:inline">Reset</span>
+              Reset
             </Button>
           </ToolbarTip>
 
@@ -227,6 +214,10 @@ export function PlaygroundToolbar({
           </ToggleGroup>
         </div>
       </div>
+
+      <p className="sr-only" aria-live="polite">
+        {shareMessage}
+      </p>
     </div>
   );
 }

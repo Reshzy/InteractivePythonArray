@@ -112,7 +112,10 @@ function MethodCard({
             {method.syntax}
           </p>
         </div>
-        {builtin ? <Badge variant="secondary">Built-in</Badge> : null}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {selected ? <Badge variant="outline">In playground</Badge> : null}
+          {builtin ? <Badge variant="secondary">Built-in</Badge> : null}
+        </div>
       </div>
 
       <p className="text-sm leading-relaxed text-muted-foreground">
