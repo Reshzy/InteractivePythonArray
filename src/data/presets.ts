@@ -1,5 +1,5 @@
 import {
-  createList,
+  createListItem,
   pythonBoolean,
   pythonNone,
   pythonNumber,
@@ -105,7 +105,9 @@ export function getPreset(id: PresetId): ListPreset {
 }
 
 export function createPresetList(id: PresetId): ListItem[] {
-  return createList(getPreset(id).values);
+  return getPreset(id).values.map((value, index) =>
+    createListItem(value, `preset:${id}:${index}`),
+  );
 }
 
 export const PRESET_SELECT_ITEMS = PRESETS.map((preset) => ({

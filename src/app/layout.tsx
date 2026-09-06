@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { getSiteUrl, SITE_DESCRIPTION, SITE_TITLE } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
@@ -19,17 +20,8 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
 });
 
-const SITE_TITLE =
-  "Python Lists Playground — Learn Python List Methods Visually";
-const SITE_DESCRIPTION =
-  "Learn Python lists interactively. Visualize append, pop, remove, insert, sort, reverse, count, index and more as your list updates in real time.";
-
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000",
-  ),
+  metadataBase: getSiteUrl(),
   title: {
     default: SITE_TITLE,
     template: "%s — Python Lists Playground",
@@ -46,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Python Lists Playground",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
