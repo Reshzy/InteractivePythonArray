@@ -68,7 +68,7 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
       if (event.key === "Enter") {
         event.preventDefault();
         const state = usePlaygroundStore.getState();
-        if (!isRunLocked(state)) {
+        if (state.hasHydrated && !isRunLocked(state)) {
           state.executeOperation();
         }
         return;
@@ -125,34 +125,30 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
           </p>
         </header>
         {!hasHydrated ? (
-          <>
-            <div className="flex min-h-52 flex-col justify-center py-2" aria-hidden="true" />
-            <p className="sr-only">Loading playground</p>
-          </>
-        ) : (
-          <>
-            <div className="flex flex-col gap-3">
-              <ListVisualizer
-                displayList={playback.displayList}
-                incoming={playback.incoming}
-                secondary={playback.secondary}
-                secondaryLabels={playback.secondaryLabels}
-                scanCount={playback.scanCount}
-                disclaimer={playback.disclaimer}
-                visualizerError={playback.visualizerError}
-                interactive={playback.interactive}
-                cellStates={playback.cellStates}
-              />
+          <p className="sr-only">Loading saved playground</p>
+        ) : null}
+        <div className="flex flex-col gap-6" inert={!hasHydrated || undefined}>
+          <div className="flex flex-col gap-3">
+            <ListVisualizer
+              displayList={playback.displayList}
+              incoming={playback.incoming}
+              secondary={playback.secondary}
+              secondaryLabels={playback.secondaryLabels}
+              scanCount={playback.scanCount}
+              disclaimer={playback.disclaimer}
+              visualizerError={playback.visualizerError}
+              interactive={playback.interactive && hasHydrated}
+              cellStates={playback.cellStates}
+            />
 
-              <InstrumentStrip />
-              <OperationCaption />
-              {hasRunOnce ? <ResultPanel headingLevel={nestedHeading} /> : null}
-            </div>
-            <StepControls />
-            <PlaygroundToolbar hasRunOnce={hasRunOnce} />
-            {hasRunOnce ? <HistoryPanel headingLevel={nestedHeading} /> : null}
-          </>
-        )}
+            <InstrumentStrip />
+            <OperationCaption />
+            {hasRunOnce ? <ResultPanel headingLevel={nestedHeading} /> : null}
+          </div>
+          <StepControls />
+          <PlaygroundToolbar hasRunOnce={hasRunOnce} />
+          {hasRunOnce ? <HistoryPanel headingLevel={nestedHeading} /> : null}
+        </div>
       </div>
     </section>
   );

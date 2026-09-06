@@ -96,9 +96,9 @@ export function PlaygroundToolbar({ hasRunOnce }: { hasRunOnce: boolean }) {
         <Link
           href="/#challenges"
           className="inline-flex w-fit min-h-11 items-center gap-2 rounded-lg"
-          aria-label={`Practice challenge: ${activeChallenge.title}. Back to challenges.`}
+          aria-label={`Practice ${activeChallenge.title}. Back to challenges.`}
         >
-          <Badge>Practice</Badge>
+          <Badge variant="secondary">Practice</Badge>
           <span className="truncate text-sm text-muted-foreground">
             {activeChallenge.title}
           </span>

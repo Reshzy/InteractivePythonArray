@@ -67,7 +67,7 @@ export function StepControls() {
               stepBack();
             }}
             disabled={!backEnabled}
-            aria-label="Previous step"
+            aria-label="Back to previous step"
             title={backEnabled ? "Previous step" : "Already at the first step"}
           >
             Back

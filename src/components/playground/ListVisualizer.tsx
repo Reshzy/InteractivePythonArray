@@ -58,7 +58,7 @@ function CellRow({
   return (
     <ul
       data-track={track}
-      className="flex min-h-40 items-start justify-center gap-5 overflow-x-auto overscroll-x-contain pb-3 md:min-h-52 md:gap-8"
+      className="flex min-h-40 shrink-0 items-start justify-center gap-5 pb-3 md:min-h-52 md:gap-8"
     >
       {items.map((item, index) => (
         <li key={item.id}>
@@ -379,16 +379,25 @@ export function ListVisualizer({
               []
             </p>
           ) : (
-            <CellRow
-              items={secondary}
-              track="secondary"
-              interactive={false}
-              editingId={null}
-              onStartEdit={() => undefined}
-              onCancelEdit={() => undefined}
-              onSave={() => undefined}
-              onDelete={() => undefined}
-            />
+            <div className="relative min-w-0">
+              <div className="overflow-x-auto overscroll-x-contain pb-1">
+                <CellRow
+                  items={secondary}
+                  track="secondary"
+                  interactive={false}
+                  editingId={null}
+                  onStartEdit={() => undefined}
+                  onCancelEdit={() => undefined}
+                  onSave={() => undefined}
+                  onDelete={() => undefined}
+                />
+              </div>
+              <div
+                aria-hidden="true"
+                data-cell-row-fade
+                className="pointer-events-none absolute inset-y-0 right-0 w-10 md:hidden"
+              />
+            </div>
           )}
         </div>
       ) : null}

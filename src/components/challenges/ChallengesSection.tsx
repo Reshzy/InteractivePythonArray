@@ -165,7 +165,7 @@ export function ChallengesSection() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {completed ? <Badge>Completed</Badge> : null}
+            {completed ? <Badge variant="secondary">Completed</Badge> : null}
             {loadedHere ? <Badge variant="outline">In playground</Badge> : null}
           </div>
         </div>
@@ -210,7 +210,7 @@ export function ChallengesSection() {
             type="button"
             className="min-h-11"
             onClick={() => openChallenge()}
-            aria-label={`Open ${challenge.title} in the playground`}
+            aria-label={`Open in Playground: ${challenge.title}`}
           >
             Open in Playground
           </Button>
@@ -301,7 +301,7 @@ function ChallengeFeedback({
   );
 
   return (
-    <Alert>
+    <Alert variant={correct ? "default" : "destructive"}>
       {correct ? (
         <CheckCircle2Icon ref={checkRef} aria-hidden="true" />
       ) : (

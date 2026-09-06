@@ -22,7 +22,7 @@ export function focusPlayground() {
 export function TryItButton({
   method,
   snapshot,
-  children = "Try it",
+  children,
 }: {
   method: MethodId;
   snapshot?: MethodTryIt;
@@ -30,19 +30,20 @@ export function TryItButton({
 }) {
   const tryMethod = usePlaygroundStore((state) => state.tryMethod);
   const methodLabel = getMethod(method).label;
+  const visible = children ?? `Try ${methodLabel}`;
 
   return (
     <Button
       type="button"
       variant="outline"
       className="min-h-11 px-3"
-      aria-label={`Try ${methodLabel} in the playground`}
+      aria-label={`${visible} in the playground`}
       onClick={() => {
         tryMethod(method, snapshot);
         focusPlayground();
       }}
     >
-      {children}
+      {visible}
     </Button>
   );
 }

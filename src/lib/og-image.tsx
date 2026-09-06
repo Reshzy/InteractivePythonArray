@@ -35,7 +35,7 @@ export function createOgImage() {
               width: 48,
               height: 48,
               borderRadius: 8,
-              border: "2px solid #d6c8ba",
+              border: "2px solid #e4d8cc",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
