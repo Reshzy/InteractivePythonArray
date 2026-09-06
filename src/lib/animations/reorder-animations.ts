@@ -23,11 +23,11 @@ export function playError(runtime: PlaybackRuntime): void {
       visualizer,
       { x: 0 },
       {
-        x: isReduced(runtime.mode) ? 3 : 6,
-        duration: runtime.duration(0.045),
+        x: isReduced(runtime.mode) ? 4 : 10,
+        duration: runtime.duration(0.05),
         yoyo: true,
-        repeat: 5,
-        ease: "none",
+        repeat: 7,
+        ease: "power2.inOut",
       },
     );
   });

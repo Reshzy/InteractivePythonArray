@@ -58,7 +58,7 @@ function CellRow({
   return (
     <ul
       data-track={track}
-      className="flex min-h-28 items-start gap-3 overflow-x-auto pb-2"
+      className="flex min-h-52 items-start justify-center gap-6 overflow-x-auto pb-2 md:min-h-56 md:gap-8"
     >
       {items.map((item, index) => (
         <li key={item.id}>
@@ -223,30 +223,32 @@ export function ListVisualizer({
       data-visualizer-error={visualizerError ? "true" : "false"}
       aria-labelledby="list-visualizer-heading"
       className={cn(
-        "rounded-xl border border-border bg-muted/40 p-4 md:p-6",
-        visualizerError && "border-destructive",
+        "flex min-h-[46vh] flex-col justify-center py-4 md:min-h-[52vh]",
+        visualizerError && "rounded-xl outline-2 outline-destructive/50",
       )}
     >
-      <div className="mb-4 flex flex-wrap items-end gap-3">
-        <div className="flex min-w-40 flex-col gap-1.5">
-          <Label htmlFor="variable-name">Variable</Label>
+      <div className="mb-2 flex flex-wrap items-end gap-4 md:gap-8">
+        <div className="flex min-w-24 flex-col gap-1">
+          <Label htmlFor="variable-name" className="sr-only">
+            Variable
+          </Label>
           <Input
             id="variable-name"
             name="variableName"
             value={variableName}
             onChange={(event) => setVariableName(event.target.value)}
-            className="min-h-11 font-mono"
+            className="h-auto min-h-11 border-0 bg-transparent px-0 font-mono text-lg shadow-none md:text-xl"
           />
+          {xRayMode ? (
+            <p className="font-mono text-xs text-muted-foreground">
+              Length: {displayList.length}
+            </p>
+          ) : (
+            <p className="font-mono text-xs text-muted-foreground">
+              {displayList.length} {displayList.length === 1 ? "item" : "items"}
+            </p>
+          )}
         </div>
-        {xRayMode ? (
-          <p className="font-mono text-xs text-muted-foreground">
-            Length: {displayList.length}
-          </p>
-        ) : (
-          <p className="font-mono text-xs text-muted-foreground">
-            {displayList.length} {displayList.length === 1 ? "item" : "items"}
-          </p>
-        )}
         {scanCount !== null ? (
           <p
             data-scan-count
@@ -317,37 +319,37 @@ export function ListVisualizer({
             </p>
           ) : null}
 
-          {displayList.length === 0 ? (
+          {displayList.length === 0 && incoming.length === 0 ? (
             <EmptyList />
           ) : (
-            <CellRow
-              items={displayList}
-              track="list"
-              interactive={interactive}
-              cellStates={cellStates}
-              {...cellHandlers}
-            />
+            <div className="flex items-start gap-5 overflow-x-auto">
+              {displayList.length === 0 ? (
+                <EmptyList />
+              ) : (
+                <CellRow
+                  items={displayList}
+                  track="list"
+                  interactive={interactive}
+                  cellStates={cellStates}
+                  {...cellHandlers}
+                />
+              )}
+              {incoming.length > 0 ? (
+                <CellRow
+                  items={incoming}
+                  track="incoming"
+                  interactive={false}
+                  editingId={null}
+                  onStartEdit={() => undefined}
+                  onCancelEdit={() => undefined}
+                  onSave={() => undefined}
+                  onDelete={() => undefined}
+                />
+              ) : null}
+            </div>
           )}
         </>
       )}
-
-      {incoming.length > 0 ? (
-        <div className="mt-4">
-          <p className="mb-2 text-xs font-medium text-muted-foreground">
-            Incoming values
-          </p>
-          <CellRow
-            items={incoming}
-            track="incoming"
-            interactive={false}
-            editingId={null}
-            onStartEdit={() => undefined}
-            onCancelEdit={() => undefined}
-            onSave={() => undefined}
-            onDelete={() => undefined}
-          />
-        </div>
-      ) : null}
 
       {secondary && !(xRayMode && copyView) ? (
         <div className="mt-4">
@@ -393,8 +395,8 @@ export function ListVisualizer({
 
       <Button
         type="button"
-        variant="outline"
-        className="mt-3 min-h-11"
+        variant="ghost"
+        className="mt-4 min-h-11 self-center text-muted-foreground"
         onClick={() => addListItem(pythonString("item"))}
         disabled={!interactive}
       >

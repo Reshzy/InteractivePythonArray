@@ -1,0 +1,129 @@
+{
+  "regions": [
+    {
+      "id": "header",
+      "kind": "chrome",
+      "grid": "A0:J0",
+      "note": "Cream sticky header bar with a 1px warm bottom border spanning the viewport",
+      "container": true
+    },
+    {
+      "id": "mark",
+      "kind": "chrome",
+      "grid": "A0:A0",
+      "note": "Small orange square logo mark at the left of the header"
+    },
+    {
+      "id": "wordmark",
+      "kind": "text",
+      "grid": "B0:D0",
+      "note": "Header wordmark text Python Lists Playground in dark sans"
+    },
+    {
+      "id": "nav",
+      "kind": "control",
+      "grid": "F0:I0",
+      "note": "Header text links Playground Methods Comparisons Challenges"
+    },
+    {
+      "id": "theme",
+      "kind": "control",
+      "grid": "J0:J0",
+      "note": "Sun icon theme toggle at the far right of the header"
+    },
+    {
+      "id": "variable",
+      "kind": "text",
+      "grid": "A2:B2",
+      "note": "Mono variable name fruits sitting left of the list stage"
+    },
+    {
+      "id": "index-0",
+      "kind": "text",
+      "grid": "B3:C3",
+      "note": "Small index numeral 0 above the apple cell"
+    },
+    {
+      "id": "index-1",
+      "kind": "text",
+      "grid": "D3:E3",
+      "note": "Small index numeral 1 above the banana cell"
+    },
+    {
+      "id": "index-2",
+      "kind": "text",
+      "grid": "F3:G3",
+      "note": "Small index numeral 2 above the orange cell"
+    },
+    {
+      "id": "index-3",
+      "kind": "text",
+      "grid": "H3:I3",
+      "note": "Small index numeral 3 above the mango cell"
+    },
+    {
+      "id": "cell-0",
+      "kind": "control",
+      "grid": "B4:C5",
+      "note": "Large white rounded list cell showing the string apple",
+      "container": true
+    },
+    {
+      "id": "cell-1",
+      "kind": "control",
+      "grid": "D4:E5",
+      "note": "Large white rounded list cell showing the string banana",
+      "container": true
+    },
+    {
+      "id": "cell-2",
+      "kind": "control",
+      "grid": "F4:G5",
+      "note": "Large white rounded list cell showing the string orange",
+      "container": true
+    },
+    {
+      "id": "cell-3",
+      "kind": "control",
+      "grid": "H4:I5",
+      "note": "Large orange-highlighted list cell showing the string mango just appended",
+      "container": true
+    },
+    {
+      "id": "preset",
+      "kind": "control",
+      "grid": "A6:B6",
+      "note": "Preset dropdown currently showing Fruits"
+    },
+    {
+      "id": "method",
+      "kind": "control",
+      "grid": "C6:D6",
+      "note": "Method dropdown currently showing append()"
+    },
+    {
+      "id": "value",
+      "kind": "control",
+      "grid": "E6:F6",
+      "note": "Value text field containing mango"
+    },
+    {
+      "id": "run",
+      "kind": "control",
+      "grid": "I6:J6",
+      "note": "Solid orange Run button, the primary action"
+    },
+    {
+      "id": "caption",
+      "kind": "text",
+      "grid": "B7:H7",
+      "note": "Generated code caption fruits.append mango returns None"
+    },
+    {
+      "id": "methods-heading",
+      "kind": "text",
+      "grid": "A9:C9",
+      "note": "Section heading Methods at the bottom of the first viewport"
+    }
+  ]
+}

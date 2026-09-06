@@ -1,0 +1,1189 @@
+{
+  "tool": "comp-spec",
+  "version": 1,
+  "createdAt": "2026-09-06T10:03:57.187Z",
+  "comp": ".impeccable/mocks/home-comp-theater.png",
+  "warnings": [
+    "region header: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region cell-0: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region cell-1: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region cell-2: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)",
+    "region cell-3: \"container\": true set in the regions file (the region-size refusal is overridden: one undivided element)"
+  ],
+  "uncoveredInkCells": [
+    "A7"
+  ],
+  "compSize": {
+    "width": 1536,
+    "height": 1024
+  },
+  "aspect": 1.5,
+  "orientation": "landscape",
+  "palette": [
+    {
+      "hex": "#f8f8f7",
+      "coverage": 0.9767
+    },
+    {
+      "hex": "#f86508",
+      "coverage": 0.0144
+    },
+    {
+      "hex": "#171717",
+      "coverage": 0.0056
+    },
+    {
+      "hex": "#b8b8b8",
+      "coverage": 0.0018
+    },
+    {
+      "hex": "#5e5e5e",
+      "coverage": 0.0014
+    }
+  ],
+  "bands": [
+    {
+      "y": 0.0353,
+      "strength": 0.361
+    },
+    {
+      "y": 0.4235,
+      "strength": 0.3987
+    },
+    {
+      "y": 0.4588,
+      "strength": 0.3056
+    },
+    {
+      "y": 0.6118,
+      "strength": 0.2157
+    },
+    {
+      "y": 0.7059,
+      "strength": 0.2634
+    },
+    {
+      "y": 0.7412,
+      "strength": 0.2242
+    }
+  ],
+  "regions": [
+    {
+      "id": "header",
+      "kind": "chrome",
+      "note": "Cream sticky header bar with a 1px warm bottom border spanning the viewport",
+      "grid": "A0:J0",
+      "container": true,
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 0.1
+      },
+      "px": {
+        "x": 0,
+        "y": 0,
+        "w": 1536,
+        "h": 102
+      },
+      "aspect": 15.0588,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.9782
+        },
+        {
+          "hex": "#b9b9b9",
+          "coverage": 0.0082
+        },
+        {
+          "hex": "#5a5a5a",
+          "coverage": 0.0063
+        },
+        {
+          "hex": "#898989",
+          "coverage": 0.0043
+        },
+        {
+          "hex": "#0c0c0c",
+          "coverage": 0.003
+        }
+      ],
+      "detail": {
+        "energy": 11.9259
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "mark",
+      "kind": "chrome",
+      "note": "Small orange square logo mark at the left of the header",
+      "grid": "A0:A0",
+      "box": {
+        "x": 0,
+        "y": 0,
+        "w": 0.1,
+        "h": 0.1
+      },
+      "px": {
+        "x": 0,
+        "y": 0,
+        "w": 154,
+        "h": 102
+      },
+      "aspect": 1.5098,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.9518
+        },
+        {
+          "hex": "#f86808",
+          "coverage": 0.0143
+        },
+        {
+          "hex": "#0e0e0e",
+          "coverage": 0.0126
+        },
+        {
+          "hex": "#7d7a7a",
+          "coverage": 0.012
+        },
+        {
+          "hex": "#abaaaa",
+          "coverage": 0.0092
+        }
+      ],
+      "detail": {
+        "energy": 10.1214
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "wordmark",
+      "kind": "text",
+      "note": "Header wordmark text Python Lists Playground in dark sans",
+      "grid": "B0:D0",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0,
+        "w": 0.3,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.1003,
+        "y": 0.0234,
+        "w": 0.0977,
+        "h": 0.041
+      },
+      "px": {
+        "x": 154,
+        "y": 24,
+        "w": 150,
+        "h": 42
+      },
+      "aspect": 3.5714,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8479
+        },
+        {
+          "hex": "#111111",
+          "coverage": 0.0703
+        },
+        {
+          "hex": "#545351",
+          "coverage": 0.033
+        },
+        {
+          "hex": "#92928c",
+          "coverage": 0.0258
+        },
+        {
+          "hex": "#bebbba",
+          "coverage": 0.023
+        }
+      ],
+      "detail": {
+        "energy": 35.323
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 13,
+          "capHeightPx": 15.6,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6088,
+          "advTall": 0.5608,
+          "advX": 0.6088,
+          "gap": 0.1122,
+          "xRatio": 0.7506,
+          "stemW": 0.1741,
+          "contrast": 1.093,
+          "serif": 0.4679,
+          "densTall": 0.5195,
+          "densX": 0.5772,
+          "weight": 0.5195
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "nav",
+      "kind": "control",
+      "note": "Header text links Playground Methods Comparisons Challenges",
+      "grid": "F0:I0",
+      "coverBox": {
+        "x": 0.5,
+        "y": 0,
+        "w": 0.4,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.7695,
+        "y": 0.0234,
+        "w": 0.0859,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 1182,
+        "y": 24,
+        "w": 132,
+        "h": 36
+      },
+      "aspect": 3.6667,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8561
+        },
+        {
+          "hex": "#bab9b7",
+          "coverage": 0.0644
+        },
+        {
+          "hex": "#5f5f61",
+          "coverage": 0.0606
+        },
+        {
+          "hex": "#8d8e8d",
+          "coverage": 0.0189
+        }
+      ],
+      "detail": {
+        "energy": 22.2854
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "theme",
+      "kind": "control",
+      "note": "Sun icon theme toggle at the far right of the header",
+      "grid": "J0:J0",
+      "coverBox": {
+        "x": 0.9,
+        "y": 0,
+        "w": 0.1,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.8997,
+        "y": 0.0293,
+        "w": 0.0508,
+        "h": 0.0293
+      },
+      "px": {
+        "x": 1382,
+        "y": 30,
+        "w": 78,
+        "h": 30
+      },
+      "aspect": 2.6,
+      "palette": [
+        {
+          "hex": "#f8f7f7",
+          "coverage": 0.7769
+        },
+        {
+          "hex": "#c1c0c1",
+          "coverage": 0.1115
+        },
+        {
+          "hex": "#5e5f5f",
+          "coverage": 0.0885
+        },
+        {
+          "hex": "#8b8d8b",
+          "coverage": 0.0231
+        }
+      ],
+      "detail": {
+        "energy": 17.8633
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "variable",
+      "kind": "text",
+      "note": "Mono variable name fruits sitting left of the list stage",
+      "grid": "A2:B2",
+      "coverBox": {
+        "x": 0,
+        "y": 0.2,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.0391,
+        "y": 0.2061,
+        "w": 0.0781,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 60,
+        "y": 211,
+        "w": 120,
+        "h": 36
+      },
+      "aspect": 3.3333,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.8396
+        },
+        {
+          "hex": "#a8a8a8",
+          "coverage": 0.0771
+        },
+        {
+          "hex": "#676667",
+          "coverage": 0.0708
+        },
+        {
+          "hex": "#dcd8cc",
+          "coverage": 0.0083
+        },
+        {
+          "hex": "#484858",
+          "coverage": 0.0042
+        }
+      ],
+      "detail": {
+        "energy": 18.6405
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 6,
+          "capHeightPx": 21.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6284,
+          "advTall": 0.6517,
+          "advX": 0.5819,
+          "gap": 0.1862,
+          "xRatio": 0.7353,
+          "stemW": 0.1352,
+          "contrast": 1.1199,
+          "serif": null,
+          "densTall": 0.3337,
+          "densX": 0.5127,
+          "weight": 0.3337
+        },
+        "widthClass": "condensed",
+        "weightClass": "light"
+      }
+    },
+    {
+      "id": "index-0",
+      "kind": "text",
+      "note": "Small index numeral 0 above the apple cell",
+      "grid": "B3:C3",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0.3,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.1471,
+        "y": 0.2998,
+        "w": 0.0156,
+        "h": 0.0117
+      },
+      "px": {
+        "x": 226,
+        "y": 307,
+        "w": 24,
+        "h": 12
+      },
+      "aspect": 2,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.9375
+        },
+        {
+          "hex": "#707078",
+          "coverage": 0.0625
+        }
+      ],
+      "detail": {
+        "energy": 1.2354
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": null,
+        "measuredAt": "2026-09-06T10:05:07.446Z",
+        "note": "no separable lettering in the crop; size by the region box"
+      }
+    },
+    {
+      "id": "index-1",
+      "kind": "text",
+      "note": "Small index numeral 1 above the banana cell",
+      "grid": "D3:E3",
+      "coverBox": {
+        "x": 0.3,
+        "y": 0.3,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.3783,
+        "y": 0.2998,
+        "w": 0.0156,
+        "h": 0.0117
+      },
+      "px": {
+        "x": 581,
+        "y": 307,
+        "w": 24,
+        "h": 12
+      },
+      "aspect": 2,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.875
+        },
+        {
+          "hex": "#7c7c80",
+          "coverage": 0.125
+        }
+      ],
+      "detail": {
+        "energy": 1.8989
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": null,
+        "measuredAt": "2026-09-06T10:05:07.481Z",
+        "note": "no separable lettering in the crop; size by the region box"
+      }
+    },
+    {
+      "id": "index-2",
+      "kind": "text",
+      "note": "Small index numeral 2 above the orange cell",
+      "grid": "F3:G3",
+      "coverBox": {
+        "x": 0.5,
+        "y": 0.3,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.6016,
+        "y": 0.2998,
+        "w": 0.0195,
+        "h": 0.0117
+      },
+      "px": {
+        "x": 924,
+        "y": 307,
+        "w": 30,
+        "h": 12
+      },
+      "aspect": 2.5,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.9
+        },
+        {
+          "hex": "#7c7c7c",
+          "coverage": 0.1
+        }
+      ],
+      "detail": {
+        "energy": 1.9977
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": null,
+        "measuredAt": "2026-09-06T10:05:07.515Z",
+        "note": "no separable lettering in the crop; size by the region box"
+      }
+    },
+    {
+      "id": "index-3",
+      "kind": "text",
+      "note": "Small index numeral 3 above the mango cell",
+      "grid": "H3:I3",
+      "coverBox": {
+        "x": 0.7,
+        "y": 0.3,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.7311,
+        "y": 0.3232,
+        "w": 0.1686,
+        "h": 0.0762
+      },
+      "px": {
+        "x": 1123,
+        "y": 331,
+        "w": 259,
+        "h": 78
+      },
+      "aspect": 3.3205,
+      "palette": [
+        {
+          "hex": "#f8f8ec",
+          "coverage": 0.992
+        },
+        {
+          "hex": "#f8be96",
+          "coverage": 0.0062
+        },
+        {
+          "hex": "#f85808",
+          "coverage": 0.0018
+        }
+      ],
+      "detail": {
+        "energy": 7.5339
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": null,
+        "measuredAt": "2026-09-06T10:05:07.554Z",
+        "note": "no separable lettering in the crop; size by the region box"
+      }
+    },
+    {
+      "id": "cell-0",
+      "kind": "control",
+      "note": "Large white rounded list cell showing the string apple",
+      "grid": "B4:C5",
+      "container": true,
+      "coverBox": {
+        "x": 0.1,
+        "y": 0.4,
+        "w": 0.2,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.1003,
+        "y": 0.4063,
+        "w": 0.1289,
+        "h": 0.0586
+      },
+      "px": {
+        "x": 154,
+        "y": 416,
+        "w": 198,
+        "h": 60
+      },
+      "aspect": 3.3,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.79
+        },
+        {
+          "hex": "#1e1e1d",
+          "coverage": 0.1575
+        },
+        {
+          "hex": "#5e5f5e",
+          "coverage": 0.0274
+        },
+        {
+          "hex": "#9e9ea0",
+          "coverage": 0.0152
+        },
+        {
+          "hex": "#c7c8cc",
+          "coverage": 0.0099
+        }
+      ],
+      "detail": {
+        "energy": 33.7829
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "cell-1",
+      "kind": "control",
+      "note": "Large white rounded list cell showing the string banana",
+      "grid": "D4:E5",
+      "container": true,
+      "coverBox": {
+        "x": 0.3,
+        "y": 0.4,
+        "w": 0.2,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.3001,
+        "y": 0.4063,
+        "w": 0.1719,
+        "h": 0.0527
+      },
+      "px": {
+        "x": 461,
+        "y": 416,
+        "w": 264,
+        "h": 54
+      },
+      "aspect": 4.8889,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.7947
+        },
+        {
+          "hex": "#1e1e1d",
+          "coverage": 0.1459
+        },
+        {
+          "hex": "#9e9f9f",
+          "coverage": 0.031
+        },
+        {
+          "hex": "#606061",
+          "coverage": 0.0227
+        },
+        {
+          "hex": "#c4c6c8",
+          "coverage": 0.0057
+        }
+      ],
+      "detail": {
+        "energy": 49.7699
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "cell-2",
+      "kind": "control",
+      "note": "Large white rounded list cell showing the string orange",
+      "grid": "F4:G5",
+      "container": true,
+      "coverBox": {
+        "x": 0.5,
+        "y": 0.4,
+        "w": 0.2,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.5273,
+        "y": 0.4063,
+        "w": 0.1725,
+        "h": 0.0586
+      },
+      "px": {
+        "x": 810,
+        "y": 416,
+        "w": 265,
+        "h": 60
+      },
+      "aspect": 4.4167,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8219
+        },
+        {
+          "hex": "#1b1a1a",
+          "coverage": 0.1251
+        },
+        {
+          "hex": "#9f9fa0",
+          "coverage": 0.0259
+        },
+        {
+          "hex": "#515050",
+          "coverage": 0.0209
+        },
+        {
+          "hex": "#c4c9cb",
+          "coverage": 0.0062
+        }
+      ],
+      "detail": {
+        "energy": 43.7629
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "cell-3",
+      "kind": "control",
+      "note": "Large orange-highlighted list cell showing the string mango just appended",
+      "grid": "H4:I5",
+      "container": true,
+      "coverBox": {
+        "x": 0.7,
+        "y": 0.4,
+        "w": 0.2,
+        "h": 0.2
+      },
+      "box": {
+        "x": 0.7702,
+        "y": 0.4063,
+        "w": 0.1296,
+        "h": 0.0586
+      },
+      "px": {
+        "x": 1183,
+        "y": 416,
+        "w": 199,
+        "h": 60
+      },
+      "aspect": 3.3167,
+      "palette": [
+        {
+          "hex": "#f8f6e8",
+          "coverage": 0.7817
+        },
+        {
+          "hex": "#f8670c",
+          "coverage": 0.1668
+        },
+        {
+          "hex": "#f8dbb4",
+          "coverage": 0.0235
+        },
+        {
+          "hex": "#f8bd89",
+          "coverage": 0.0174
+        },
+        {
+          "hex": "#f89f5a",
+          "coverage": 0.0106
+        }
+      ],
+      "detail": {
+        "energy": 19.2922
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "preset",
+      "kind": "control",
+      "note": "Preset dropdown currently showing Fruits",
+      "grid": "A6:B6",
+      "coverBox": {
+        "x": 0,
+        "y": 0.6,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.0625,
+        "y": 0.6465,
+        "w": 0.0547,
+        "h": 0.0293
+      },
+      "px": {
+        "x": 96,
+        "y": 662,
+        "w": 84,
+        "h": 30
+      },
+      "aspect": 2.8,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.8429
+        },
+        {
+          "hex": "#141414",
+          "coverage": 0.0893
+        },
+        {
+          "hex": "#acaeab",
+          "coverage": 0.0393
+        },
+        {
+          "hex": "#404343",
+          "coverage": 0.0214
+        },
+        {
+          "hex": "#707070",
+          "coverage": 0.0071
+        }
+      ],
+      "detail": {
+        "energy": 21.9267
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "method",
+      "kind": "control",
+      "note": "Method dropdown currently showing append()",
+      "grid": "C6:D6",
+      "coverBox": {
+        "x": 0.2,
+        "y": 0.6,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.2585,
+        "y": 0.6465,
+        "w": 0.0703,
+        "h": 0.0352
+      },
+      "px": {
+        "x": 397,
+        "y": 662,
+        "w": 108,
+        "h": 36
+      },
+      "aspect": 3,
+      "palette": [
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.838
+        },
+        {
+          "hex": "#141414",
+          "coverage": 0.088
+        },
+        {
+          "hex": "#6d6d6f",
+          "coverage": 0.037
+        },
+        {
+          "hex": "#bdc3c3",
+          "coverage": 0.0208
+        },
+        {
+          "hex": "#383836",
+          "coverage": 0.0162
+        }
+      ],
+      "detail": {
+        "energy": 27.2512
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "value",
+      "kind": "control",
+      "note": "Value text field containing mango",
+      "grid": "E6:F6",
+      "coverBox": {
+        "x": 0.4,
+        "y": 0.6,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.4271,
+        "y": 0.6523,
+        "w": 0.0547,
+        "h": 0.0293
+      },
+      "px": {
+        "x": 656,
+        "y": 668,
+        "w": 84,
+        "h": 30
+      },
+      "aspect": 2.8,
+      "palette": [
+        {
+          "hex": "#f7f7f7",
+          "coverage": 0.7964
+        },
+        {
+          "hex": "#101010",
+          "coverage": 0.0857
+        },
+        {
+          "hex": "#525252",
+          "coverage": 0.0464
+        },
+        {
+          "hex": "#b7b8b8",
+          "coverage": 0.0429
+        },
+        {
+          "hex": "#848486",
+          "coverage": 0.0286
+        }
+      ],
+      "detail": {
+        "energy": 25.8858
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "run",
+      "kind": "control",
+      "note": "Solid orange Run button, the primary action",
+      "grid": "I6:J6",
+      "coverBox": {
+        "x": 0.8,
+        "y": 0.6,
+        "w": 0.2,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.8001,
+        "y": 0.6113,
+        "w": 0.1602,
+        "h": 0.0879
+      },
+      "px": {
+        "x": 1229,
+        "y": 626,
+        "w": 246,
+        "h": 90
+      },
+      "aspect": 2.7333,
+      "palette": [
+        {
+          "hex": "#f86608",
+          "coverage": 0.8524
+        },
+        {
+          "hex": "#f8f8f8",
+          "coverage": 0.102
+        },
+        {
+          "hex": "#f8a368",
+          "coverage": 0.0306
+        },
+        {
+          "hex": "#f8914a",
+          "coverage": 0.0122
+        },
+        {
+          "hex": "#f8e8cd",
+          "coverage": 0.0029
+        }
+      ],
+      "detail": {
+        "energy": 6.9972
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null
+    },
+    {
+      "id": "caption",
+      "kind": "text",
+      "note": "Generated code caption fruits.append mango returns None",
+      "grid": "B7:H7",
+      "coverBox": {
+        "x": 0.1,
+        "y": 0.7,
+        "w": 0.7,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.2721,
+        "y": 0.7354,
+        "w": 0.1172,
+        "h": 0.0293
+      },
+      "px": {
+        "x": 418,
+        "y": 753,
+        "w": 180,
+        "h": 30
+      },
+      "aspect": 6,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.8134
+        },
+        {
+          "hex": "#0e0e0e",
+          "coverage": 0.1042
+        },
+        {
+          "hex": "#cac6c2",
+          "coverage": 0.0336
+        },
+        {
+          "hex": "#9f9c99",
+          "coverage": 0.0286
+        },
+        {
+          "hex": "#595858",
+          "coverage": 0.0202
+        }
+      ],
+      "detail": {
+        "energy": 45.6413
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 11,
+          "capHeightPx": 16.7,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6303,
+          "advTall": 0.6603,
+          "advX": 0.6303,
+          "gap": 0.1801,
+          "xRatio": 0.7706,
+          "stemW": 0.1653,
+          "contrast": 1.2141,
+          "serif": 0.4461,
+          "densTall": 0.5443,
+          "densX": 0.5344,
+          "weight": 0.5443
+        },
+        "widthClass": "normal",
+        "weightClass": "medium"
+      }
+    },
+    {
+      "id": "methods-heading",
+      "kind": "text",
+      "note": "Section heading Methods at the bottom of the first viewport",
+      "grid": "A9:C9",
+      "coverBox": {
+        "x": 0,
+        "y": 0.9,
+        "w": 0.3,
+        "h": 0.1
+      },
+      "box": {
+        "x": 0.0469,
+        "y": 0.9414,
+        "w": 0.1016,
+        "h": 0.0469
+      },
+      "px": {
+        "x": 72,
+        "y": 964,
+        "w": 156,
+        "h": 48
+      },
+      "aspect": 3.25,
+      "palette": [
+        {
+          "hex": "#f7f7f6",
+          "coverage": 0.7817
+        },
+        {
+          "hex": "#1c1c1c",
+          "coverage": 0.1604
+        },
+        {
+          "hex": "#636262",
+          "coverage": 0.0241
+        },
+        {
+          "hex": "#a1a0a0",
+          "coverage": 0.0241
+        },
+        {
+          "hex": "#d4ccc6",
+          "coverage": 0.0097
+        }
+      ],
+      "detail": {
+        "energy": 35.4287
+      },
+      "medium": "semantic",
+      "plate": null,
+      "text": null,
+      "type": {
+        "comp": {
+          "lines": 1,
+          "glyphs": 8,
+          "capHeightPx": 26.5,
+          "inkIsDark": true,
+          "allCaps": false,
+          "advance": 0.6415,
+          "advTall": 0.6038,
+          "advX": 0.6792,
+          "gap": 0.1132,
+          "xRatio": 0.7221,
+          "stemW": 0.1604,
+          "contrast": 1.1829,
+          "serif": null,
+          "densTall": 0.4817,
+          "densX": 0.5466,
+          "weight": 0.4817
+        },
+        "widthClass": "normal",
+        "weightClass": "medium",
+        "chosen": {
+          "family": "Convergence",
+          "weight": 400,
+          "fontSizePx": 38,
+          "source": "catalog",
+          "estimatedSize": true,
+          "stamp": "aa657058fc41"
+        }
+      }
+    }
+  ]
+}

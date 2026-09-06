@@ -21,9 +21,44 @@ export function playAppend(
   route: Extract<PlaybackRoute, { type: "append" }>,
 ): void {
   const added = runtime.after[route.addedIndex];
-  runtime.timeline.add(() => {
-    runtime.commitVisual({ displayList: runtime.after, flip: true });
-  });
+
+  if (added && !isReduced(runtime.mode)) {
+    runtime.timeline.add(() => {
+      runtime.commitVisual({
+        displayList: runtime.before,
+        incoming: [added],
+      });
+    });
+    runtime.timeline.add(() => {
+      const incoming = runtime.getIncomingCells();
+      if (incoming.length === 0) {
+        return;
+      }
+
+      gsap.fromTo(
+        incoming,
+        { x: 80, autoAlpha: 0 },
+        {
+          x: 0,
+          autoAlpha: 1,
+          duration: runtime.duration(0.42),
+          ease: "power3.out",
+        },
+      );
+    });
+    addDelay(runtime.timeline, runtime.duration(0.44));
+    runtime.timeline.add(() => {
+      runtime.commitVisual({
+        displayList: runtime.after,
+        incoming: [],
+        flip: true,
+      });
+    });
+  } else {
+    runtime.timeline.add(() => {
+      runtime.commitVisual({ displayList: runtime.after, flip: true });
+    });
+  }
 
   if (added) {
     pulseInserted(runtime, added.id);
@@ -80,6 +115,20 @@ export function playPop(
 
   runtime.timeline.add(() => {
     runtime.setCellState(removed.id, "returned");
+  });
+  runtime.timeline.add(() => {
+    const cell = runtime.getCellById(removed.id);
+    if (cell && !isReduced(runtime.mode)) {
+      gsap.to(cell, {
+        y: 28,
+        autoAlpha: 0,
+        duration: runtime.duration(0.28),
+        ease: "power2.in",
+      });
+    }
+  });
+  addDelay(runtime.timeline, runtime.duration(isReduced(runtime.mode) ? 0.06 : 0.3));
+  runtime.timeline.add(() => {
     runtime.commitVisual({ displayList: runtime.after, flip: true });
   });
   runtime.timeline.add(() => runtime.revealResult());

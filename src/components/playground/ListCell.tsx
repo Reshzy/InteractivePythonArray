@@ -47,8 +47,8 @@ export function ListCell({
       data-flip-id={item.id}
       data-cell-state={visualState}
       className={cn(
-        "flex min-w-28 shrink-0 flex-col items-center gap-1.5",
-        isEditing && "min-w-56",
+        "flex min-w-40 shrink-0 flex-col items-center gap-2 md:min-w-52",
+        isEditing && "min-w-56 md:min-w-64",
         className,
       )}
     >
@@ -69,7 +69,7 @@ export function ListCell({
         <>
           <div
             data-cell-body
-            className="flex min-h-16 w-full items-center justify-center rounded-xl border border-border bg-card px-4 py-3 font-mono text-sm shadow-sm"
+            className="flex min-h-28 w-full items-center justify-center rounded-xl border border-border bg-card px-5 py-5 font-mono text-lg shadow-[0_10px_24px_-18px_rgb(23_23_23_/_45%)] md:min-h-32 md:text-xl"
           >
             {formatPythonValue(item.value)}
           </div>

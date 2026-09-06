@@ -10,7 +10,7 @@ export function HistoryPanel() {
   return (
     <section
       aria-labelledby="history-heading"
-      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+      className="flex flex-col gap-3"
     >
       <h3 id="history-heading" className="text-sm font-medium">
         History

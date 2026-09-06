@@ -12,14 +12,6 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -32,7 +24,6 @@ import {
   ANIMATION_SPEED_OPTIONS,
   isAnimationSpeed,
 } from "@/data/playground-demo";
-import { PRESET_SELECT_ITEMS, isPresetId } from "@/data/presets";
 import { buildShareUrl } from "@/lib/playground/share";
 import {
   canRedo,
@@ -66,11 +57,9 @@ export function PlaygroundToolbar({
   headingLevel?: "h1" | "h2";
 }) {
   const HeadingTag = headingLevel;
-  const selectedPreset = usePlaygroundStore((state) => state.selectedPreset);
   const animationSpeed = usePlaygroundStore((state) => state.animationSpeed);
   const undoEnabled = usePlaygroundStore((state) => canUndo(state));
   const redoEnabled = usePlaygroundStore((state) => canRedo(state));
-  const loadPreset = usePlaygroundStore((state) => state.loadPreset);
   const undo = usePlaygroundStore((state) => state.undo);
   const redo = usePlaygroundStore((state) => state.redo);
   const reset = usePlaygroundStore((state) => state.reset);
@@ -108,10 +97,7 @@ export function PlaygroundToolbar({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex min-w-0 flex-col gap-2">
-        <HeadingTag
-          id="playground-heading"
-          className="text-xl font-medium tracking-tight"
-        >
+        <HeadingTag id="playground-heading" className="sr-only">
           Python List Playground
         </HeadingTag>
         {activeChallenge ? (
@@ -133,32 +119,6 @@ export function PlaygroundToolbar({
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <Select
-            items={PRESET_SELECT_ITEMS}
-            value={selectedPreset}
-            onValueChange={(value) => {
-              if (isPresetId(value)) {
-                loadPreset(value);
-              }
-            }}
-          >
-            <SelectTrigger
-              aria-label="List preset"
-              className="min-h-11 min-w-36"
-            >
-              <SelectValue placeholder="Preset" />
-            </SelectTrigger>
-            <SelectContent alignItemWithTrigger={false}>
-              <SelectGroup>
-                {PRESET_SELECT_ITEMS.map((preset) => (
-                  <SelectItem key={preset.value} value={preset.value}>
-                    {preset.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
           <ToolbarTip label={xRayMode ? "Hide X-Ray" : "Show X-Ray"}>
             <Toggle
               variant="outline"

@@ -32,7 +32,7 @@ Neighboring tools (language docs, REPL sandboxes, whole-program tracers) cannot 
 
 Learners use the site in a browser on their own, or while a teacher projects it. There are no accounts, databases, or cloud progress.
 
-- Home (`/`) is a single-page learning flow: hero, playground, methods, comparisons, challenges.
+- Home (`/`) is a playground-first stage: the list is the first viewport, then methods, comparisons, and challenges.
 - `/playground` is the shareable playground-only page (`?preset=` / `?method=` for simple snapshots, `?s=` for encoded full state).
 - Playground state persists locally; undo/redo, history, reset, presets, animation speed, step mode, X-ray indices, and dark mode are part of using it.
 - `PYTHON_LISTS_PLAYGROUND_MASTER.md` is the product source of truth for later work.

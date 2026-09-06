@@ -45,7 +45,7 @@ export function ResultPanel() {
   return (
     <section
       aria-labelledby="result-panel-heading"
-      className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4"
+      className="flex flex-col gap-2"
     >
       <div className="flex flex-wrap items-center gap-2">
         <h3 id="result-panel-heading" className="text-sm font-medium">

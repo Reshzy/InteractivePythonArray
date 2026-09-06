@@ -1,0 +1,223 @@
+{
+  "tool": "build-phase",
+  "version": 2,
+  "startedAt": "2026-09-06T10:02:18.977Z",
+  "comp": ".impeccable/mocks/home-comp-theater.png",
+  "direction": null,
+  "breakpoint": "1440x900",
+  "artifact": null,
+  "phase": "hero",
+  "phases": {
+    "comps": {
+      "status": "skipped",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [
+        {
+          "at": "2026-09-06T10:02:18.977Z",
+          "text": "started with an approved comp; the comp round happened before this state (surface round or manual)"
+        }
+      ],
+      "gate": null,
+      "forced": null
+    },
+    "spec": {
+      "status": "closed",
+      "openedAt": "2026-09-06T10:02:18.977Z",
+      "closedAt": "2026-09-06T10:05:15.269Z",
+      "attempts": 3,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "20 regions, 0 plates, 8 text regions measured",
+        "at": "2026-09-06T10:05:15.269Z"
+      },
+      "forced": null
+    },
+    "plates": {
+      "status": "closed",
+      "openedAt": "2026-09-06T10:05:15.269Z",
+      "closedAt": "2026-09-06T10:05:23.066Z",
+      "attempts": 1,
+      "notes": [],
+      "gate": {
+        "ok": true,
+        "reasons": [],
+        "summary": "no plates owed",
+        "at": "2026-09-06T10:05:23.066Z"
+      },
+      "forced": null
+    },
+    "hero": {
+      "status": "open",
+      "openedAt": "2026-09-06T10:05:23.066Z",
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": {
+        "ok": false,
+        "reasons": [
+          "hero overall 61.8% < 72% (structure 79%, color 97%, detail 27%)",
+          "region header is missing (detail 0%, structure 97%): the comp shows material the build does not",
+          "region mark is missing (detail 0%, structure 85%): the comp shows material the build does not",
+          "region wordmark is missing (detail 0%, structure 63%): the comp shows material the build does not",
+          "region nav is missing (detail 0%, structure 73%): the comp shows material the build does not",
+          "region theme is missing (detail 0%, structure 74%): the comp shows material the build does not",
+          "region variable is missing (detail 1%, structure 68%): the comp shows material the build does not",
+          "region index-0 is missing (detail 4%, structure 89%): the comp shows material the build does not",
+          "region index-1 is missing (detail 8%, structure 92%): the comp shows material the build does not",
+          "region index-2 is missing (detail 0%, structure 91%): the comp shows material the build does not",
+          "region index-3 is missing (detail 2%, structure 88%): the comp shows material the build does not",
+          "region cell-0 is missing (detail 3%, structure 40%): the comp shows material the build does not",
+          "region cell-1 is missing (detail 2%, structure 41%): the comp shows material the build does not",
+          "region cell-2 is missing (detail 2%, structure 44%): the comp shows material the build does not",
+          "region cell-3 is missing (detail 2%, structure 48%): the comp shows material the build does not",
+          "region preset is missing (detail 1%, structure 74%): the comp shows material the build does not",
+          "region method is missing (detail 2%, structure 66%): the comp shows material the build does not",
+          "region value is missing (detail 1%, structure 74%): the comp shows material the build does not",
+          "region run is missing (detail 4%, structure 74%): the comp shows material the build does not",
+          "region caption is missing (detail 7%, structure 65%): the comp shows material the build does not",
+          "region methods-heading is missing (detail 5%, structure 37%): the comp shows material the build does not",
+          "READINGS, each one CSS edit (2):",
+          "text methods-heading: cap height 9.8px in the build, 26.5px in the comp (-63%); set font-size so the cap height renders at 26.5px (font-match ranked Convergence 400 at 38px)",
+          "control method: its ink is 1px tall in the build and 20px in the comp (-19px); match the height, not only the position",
+          "the build carries ink in 5 grid cells where the comp is calm (D3, F3, B8, C8, C9); nothing exists on the page that the comp does not show (a kicker, an extra nav item, a divider, a second row of controls); remove it or name it in a stated decision after the hero passes"
+        ],
+        "summary": "hero 62% (drift)",
+        "score": 0.6178,
+        "verdict": "drift",
+        "report": ".impeccable/review/diff/hero/report.json",
+        "sideBySide": "I:/Documents/PersonalProjects_stuffs/PythonArray/.impeccable/review/diff/hero/side-by-side.png",
+        "worst": [
+          "cell-3 missing 36%",
+          "run missing 38%",
+          "methods-heading missing 44%"
+        ],
+        "worstIds": [
+          "cell-3",
+          "run",
+          "methods-heading"
+        ],
+        "worstCrops": [
+          {
+            "id": "cell-3",
+            "verdict": "missing",
+            "score": {
+              "overall": 0.3558,
+              "structure": 0.479,
+              "color": 0.3885,
+              "colorIntersection": 0.0797,
+              "paletteMatch": 0.5547,
+              "detail": 0.0213,
+              "detailRaw": 0.0213,
+              "detailAdded": 0,
+              "bands": 0.4
+            },
+            "file": ".impeccable/review/diff/hero/regions/cell-3.png"
+          },
+          {
+            "id": "run",
+            "verdict": "missing",
+            "score": {
+              "overall": 0.3776,
+              "structure": 0.7409,
+              "color": 0.1021,
+              "colorIntersection": 0.1021,
+              "paletteMatch": 0.1021,
+              "detail": 0.0422,
+              "detailRaw": 0.0422,
+              "detailAdded": 0,
+              "bands": 0.4
+            },
+            "file": ".impeccable/review/diff/hero/regions/run.png"
+          },
+          {
+            "id": "methods-heading",
+            "verdict": "missing",
+            "score": {
+              "overall": 0.4422,
+              "structure": 0.3695,
+              "color": 0.8423,
+              "colorIntersection": 0.781,
+              "paletteMatch": 0.8753,
+              "detail": 0.0461,
+              "detailRaw": 0.0878,
+              "detailAdded": 0.0833,
+              "bands": 0.4
+            },
+            "file": ".impeccable/review/diff/hero/regions/methods-heading.png"
+          }
+        ],
+        "regionVerdicts": {
+          "header": "missing",
+          "mark": "missing",
+          "wordmark": "missing",
+          "nav": "missing",
+          "theme": "missing",
+          "variable": "missing",
+          "index-0": "missing",
+          "index-1": "missing",
+          "index-2": "missing",
+          "index-3": "missing",
+          "cell-0": "missing",
+          "cell-1": "missing",
+          "cell-2": "missing",
+          "cell-3": "missing",
+          "preset": "missing",
+          "method": "missing",
+          "value": "missing",
+          "run": "missing",
+          "caption": "missing",
+          "methods-heading": "missing"
+        },
+        "at": "2026-09-06T10:12:44.293Z"
+      },
+      "forced": null,
+      "readingsSeen": {
+        "text methods-heading: cap height 9.8px in the build, 26.5px in the comp (-63%); set font-size so the cap height renders at 26.5px (font-match ranked Convergence 400 at 38px)": 1,
+        "control method: its ink is 1px tall in the build and 20px in the comp (-19px); match the height, not only the position": 1
+      },
+      "records": 1
+    },
+    "sections": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "motion": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "responsive": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    },
+    "review": {
+      "status": "pending",
+      "openedAt": null,
+      "closedAt": null,
+      "attempts": 0,
+      "notes": [],
+      "gate": null,
+      "forced": null
+    }
+  },
+  "finish": null,
+  "plates": {}
+}
