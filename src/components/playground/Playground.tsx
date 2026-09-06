@@ -34,7 +34,10 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
   const playgroundRef = useRef<HTMLElement>(null);
   const playback = useListPlayback(playgroundRef);
   const hasHydrated = usePlaygroundStore((state) => state.hasHydrated);
+  const lastResult = usePlaygroundStore((state) => state.lastResult);
+  const history = usePlaygroundStore((state) => state.history);
   const nestedHeading = headingLevel === "h1" ? "h2" : "h3";
+  const hasRunOnce = lastResult !== null || history.length > 0;
 
   useEffect(() => {
     const parsed = parseShareSearchParams(
@@ -103,44 +106,51 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
       id="playground"
       tabIndex={-1}
       aria-labelledby="playground-heading"
-      className="scroll-mt-22 flex flex-col px-4 pt-4 pb-6 outline-none"
+      className="scroll-mt-22 flex flex-col px-4 pt-3 pb-8 outline-none"
       aria-busy={!hasHydrated}
     >
       <div
         data-playground-shell
         className="mx-auto flex w-full max-w-6xl flex-col gap-6"
       >
-        <HeadingTag id="playground-heading" className="sr-only">
-          Python Lists Playground
-        </HeadingTag>
+        <header className="flex max-w-[65ch] flex-col gap-1">
+          <HeadingTag
+            id="playground-heading"
+            className="text-xl font-medium tracking-tight md:text-2xl"
+          >
+            Playground
+          </HeadingTag>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Learn Python lists by playing with them.
+          </p>
+        </header>
         {!hasHydrated ? (
           <>
-            <div
-              className="flex min-h-[46vh] flex-col justify-center py-4 md:min-h-[52vh]"
-              aria-hidden="true"
-            />
+            <div className="flex min-h-52 flex-col justify-center py-2" aria-hidden="true" />
             <p className="sr-only">Loading playground</p>
           </>
         ) : (
           <>
-            <ListVisualizer
-              displayList={playback.displayList}
-              incoming={playback.incoming}
-              secondary={playback.secondary}
-              secondaryLabels={playback.secondaryLabels}
-              scanCount={playback.scanCount}
-              disclaimer={playback.disclaimer}
-              visualizerError={playback.visualizerError}
-              interactive={playback.interactive}
-              cellStates={playback.cellStates}
-            />
+            <div className="flex flex-col gap-3">
+              <ListVisualizer
+                displayList={playback.displayList}
+                incoming={playback.incoming}
+                secondary={playback.secondary}
+                secondaryLabels={playback.secondaryLabels}
+                scanCount={playback.scanCount}
+                disclaimer={playback.disclaimer}
+                visualizerError={playback.visualizerError}
+                interactive={playback.interactive}
+                cellStates={playback.cellStates}
+              />
 
-            <InstrumentStrip />
-            <OperationCaption />
+              <InstrumentStrip />
+              <OperationCaption />
+              {hasRunOnce ? <ResultPanel headingLevel={nestedHeading} /> : null}
+            </div>
             <StepControls />
-            <PlaygroundToolbar />
-            <ResultPanel headingLevel={nestedHeading} />
-            <HistoryPanel headingLevel={nestedHeading} />
+            <PlaygroundToolbar hasRunOnce={hasRunOnce} />
+            {hasRunOnce ? <HistoryPanel headingLevel={nestedHeading} /> : null}
           </>
         )}
       </div>

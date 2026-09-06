@@ -19,6 +19,7 @@ export function ResultPanel({
   const lastResult = usePlaygroundStore((state) => state.lastResult);
   const list = usePlaygroundStore((state) => state.list);
   const resultRevealed = usePlaygroundStore((state) => state.resultRevealed);
+  const resultView = usePlaygroundStore((state) => state.resultView);
   const isAnimating = usePlaygroundStore((state) => state.isAnimating);
   const playbackKind = usePlaygroundStore((state) => state.playbackKind);
   const steps = usePlaygroundStore((state) => state.steps);
@@ -27,7 +28,9 @@ export function ResultPanel({
 
   const currentStep = playbackKind === "step" ? steps[stepIndex] : undefined;
   const stepping = Boolean(currentStep);
-  const showResult = Boolean(lastResult) && resultRevealed && !stepping;
+  const live = resultView === "live" || resultView === "undone";
+  const showResult = Boolean(lastResult) && resultRevealed && !stepping && live;
+  const undone = resultView === "undone" && showResult;
   const announcement = stepping && currentStep
     ? currentStep.explanation
     : showResult && lastResult
@@ -38,7 +41,7 @@ export function ResultPanel({
 
   const listChanged = showResult && lastResult
     ? lastResult.mutates && !lastResult.error
-    : method.mutates;
+    : null;
   const returns = showResult && lastResult
     ? lastResult.error
       ? "—"
@@ -46,11 +49,18 @@ export function ResultPanel({
     : (isAnimating || stepping) && lastResult
       ? "…"
       : method.returnType;
+  const returnedNone =
+    showResult &&
+    lastResult &&
+    !lastResult.error &&
+    lastResult.returnValue !== undefined &&
+    !Array.isArray(lastResult.returnValue) &&
+    lastResult.returnValue.type === "none";
 
   return (
     <section
       aria-labelledby="result-panel-heading"
-      className="flex flex-col gap-2"
+      className="flex max-w-[65ch] flex-col gap-2"
     >
       <div className="flex flex-wrap items-center gap-2">
         <HeadingTag id="result-panel-heading" className="text-sm font-medium">
@@ -58,6 +68,8 @@ export function ResultPanel({
         </HeadingTag>
         {stepping ? (
           <Badge variant="outline">Step</Badge>
+        ) : undone ? (
+          <Badge variant="outline">Undone</Badge>
         ) : showResult && lastResult?.error ? (
           <Badge variant="destructive">{lastResult.error.type}</Badge>
         ) : showResult && lastResult ? (
@@ -78,11 +90,11 @@ export function ResultPanel({
           <p className="font-mono text-sm font-medium text-destructive">
             {lastResult.error.type}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm leading-relaxed text-muted-foreground">
             {lastResult.error.friendlyMessage}
           </p>
           {lastResult.error.guidance ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               {lastResult.error.guidance}
             </p>
           ) : null}
@@ -93,9 +105,11 @@ export function ResultPanel({
           ) : null}
         </div>
       ) : stepping && currentStep?.error ? (
-        <p className="text-sm text-destructive">{currentStep.explanation}</p>
+        <p className="text-sm leading-relaxed text-destructive">
+          {currentStep.explanation}
+        </p>
       ) : (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {stepping && currentStep
             ? currentStep.explanation
             : showResult && lastResult
@@ -104,11 +118,33 @@ export function ResultPanel({
         </p>
       )}
 
+      {returnedNone ? (
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          None means there is no new value — the list itself changed.
+        </p>
+      ) : null}
+
+      {undone ? (
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          The list is restored. History still keeps this run so you can redo it.
+        </p>
+      ) : null}
+
       <dl className="grid grid-cols-2 gap-2 text-sm">
         <div className="flex flex-col gap-1 rounded-lg bg-muted/70 px-3 py-2">
-          <dt className="text-xs text-muted-foreground">List changed</dt>
+          <dt className="text-xs text-muted-foreground">
+            {undone ? "List" : "List changed"}
+          </dt>
           <dd className="font-medium">
-            {showResult ? (listChanged ? "Yes" : "No") : isAnimating || stepping ? "…" : listChanged ? "Yes" : "No"}
+            {undone
+              ? "Restored"
+              : showResult
+                ? listChanged
+                  ? "Yes"
+                  : "No"
+                : isAnimating || stepping
+                  ? "…"
+                  : "—"}
           </dd>
         </div>
         <div className="flex flex-col gap-1 rounded-lg bg-muted/70 px-3 py-2">

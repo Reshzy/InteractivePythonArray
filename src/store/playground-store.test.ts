@@ -33,6 +33,8 @@ describe("playground store", () => {
     expect(state.history).toHaveLength(1);
     expect(state.historyIndex).toBe(0);
     expect(state.selectedPreset).toBeNull();
+    expect(state.presetSource).toBe("fruits");
+    expect(state.resultView).toBe("live");
   });
 
   it("preserves list IDs for non-mutating operations", () => {
@@ -70,7 +72,9 @@ describe("playground store", () => {
     store.getState().undo();
     expect(ids(store)).toEqual(originalIds);
     expect(store.getState().list).toHaveLength(3);
-    expect(store.getState().lastResult).toBeNull();
+    expect(store.getState().lastResult?.code).toBe('fruits.append("mango")');
+    expect(store.getState().resultView).toBe("undone");
+    expect(store.getState().selectedPreset).toBe("fruits");
     expect(canUndo(store.getState())).toBe(false);
     expect(canRedo(store.getState())).toBe(true);
 
@@ -78,6 +82,9 @@ describe("playground store", () => {
     expect(ids(store)).toEqual(afterAppendIds);
     expect(store.getState().list[3]?.value).toEqual(pythonString("mango"));
     expect(store.getState().lastResult?.code).toBe('fruits.append("mango")');
+    expect(store.getState().resultView).toBe("live");
+    expect(store.getState().selectedPreset).toBeNull();
+    expect(store.getState().presetSource).toBe("fruits");
   });
 
   it("truncates the redo branch after a new operation", () => {
@@ -139,6 +146,9 @@ describe("playground store", () => {
     expect(state.lastResult).toBeNull();
     expect(state.animationSpeed).toBe(2);
     expect(state.selectedPreset).toBe("fruits");
+    expect(state.presetSource).toBe("fruits");
+    expect(state.resultView).toBe("preview");
+    expect(state.presetSource).toBe("fruits");
   });
 
   it("loads presets with new IDs and clears history", () => {
@@ -158,6 +168,7 @@ describe("playground store", () => {
     expect(state.history).toEqual([]);
     expect(state.lastResult).toBeNull();
     expect(state.selectedPreset).toBe("numbers");
+    expect(state.presetSource).toBe("numbers");
     expect(new Set(ids(store)).size).toBe(4);
   });
 
@@ -433,11 +444,13 @@ describe("parsePersistedState", () => {
 
     expect(parsePersistedState({ state: snapshot, version: 1 })).toEqual({
       ...snapshot,
+      presetSource: "numbers",
       xRayMode: false,
       stepMode: false,
     });
     expect(parsePersistedState(snapshot)).toEqual({
       ...snapshot,
+      presetSource: "numbers",
       xRayMode: false,
       stepMode: false,
     });

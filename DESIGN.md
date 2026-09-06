@@ -40,6 +40,12 @@ typography:
     fontWeight: 500
     lineHeight: 1.25
     letterSpacing: "normal"
+  meta:
+    fontFamily: "Geist, ui-sans-serif, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 500
+    lineHeight: 1.25
+    letterSpacing: "0.04em"
   mono:
     fontFamily: "Geist Mono, ui-monospace, SFMono-Regular, monospace"
     fontSize: "0.875rem"
@@ -152,20 +158,23 @@ Warm paper with one signal accent. Orange is scarce on purpose.
 **Character:** Calm UI type with mono reserved for Python: variable names, values, method labels, generated code.
 
 ### Hierarchy
-- **Title** (medium, 1.65rem, tight tracking): Section names — Methods, Comparisons, Challenges.
+- **Title** (medium, 1.65rem, tight tracking): Section names — Methods, Comparisons, Challenges. The playground heading is 1.25rem (1.5rem on desktop).
 - **Body** (regular, 0.875rem, relaxed leading): Teaching copy. Keep measure near 65ch.
 - **Label** (medium, 0.875rem): Field names (Preset, Method).
+- **Meta** (medium, 0.75rem): Index chips, kbd hints, history marks, x-ray axis labels.
 - **Mono** (regular, 0.875–1.25rem): Code, cell values, captions. Theater cells step up to 1.125–1.25rem.
 
 **The Mono-Is-Python Rule.** Geist Mono is for lists, code, and method names. It is not a costume for “technical” body copy.
 
 ## Layout
 
-Max width 72rem (`max-w-6xl`), 16px page gutters, sticky header with `scroll-padding-top: 5.5rem` so hash links and focus clear the bar. Home reading order: list stage, instrument strip, caption, result, then Methods / Comparisons / Challenges.
+Max width 72rem (`max-w-6xl`), 16px page gutters, sticky header with `scroll-padding-top: 5.5rem` so hash links and focus clear the bar. Home reading order: playground heading and subtitle, list stage, method + Run, caption, result (after the first run), then Methods / Comparisons / Challenges.
 
-Rhythm: tight inside a control group (`gap-1`–`gap-3`), generous between stage regions (`gap-6`) and between page sections (`py-12`).
+The first visit is cells, method, Run, and caption. Advanced chrome (X-Ray, Step, speeds, History) waits until after the first run. Result docks to the caption at `max-w-[65ch]`.
 
-Narrow viewports: section nav collapses into a menu; list cells stay theater-sized and scroll sideways inside the stage. Product controls stay at least 44px tall.
+Rhythm: tight inside a control group (`gap-1`–`gap-3`), generous between the teaching cluster and later sections (`gap-6`) and between page sections (`py-12`).
+
+Narrow viewports: section nav collapses into a menu; the wordmark stays one line; Run sits beside Method in the first row; list cells stay theater-sized and scroll sideways with a fade peek. Product controls stay at least 44px tall. Desktop-only `Ctrl / Cmd + Enter` under Run.
 
 ## Elevation & Depth
 
@@ -205,7 +214,8 @@ Flat paper at rest. Depth is a 1px warm hairline plus a soft offset shadow, neve
 - Preset and Method have visible labels.
 
 ### Navigation
-- Sticky cream bar. Desktop: text links in Quiet Ink, hover to Ink. Small screens: “Page sections” menu. Theme control is a 44px icon button.
+- Sticky cream bar. Desktop: text links in Quiet Ink, hover to Ink. Small screens: “Page sections” menu, mark hidden, wordmark one line. Theme control is a 44px icon button.
+- Playground chrome carries the visible heading **Playground** and the binding subtitle *Learn Python lists by playing with them.*
 
 ### List cells (signature)
 Theater tiles: min-width 10rem (13rem on desktop), min-height 7rem, mono value, index above in Quiet Ink. State is border + fill + shadow, plus a live result announcement — never color alone. Reduced motion: highlight and fade, no Flip travel, no shake.
@@ -213,8 +223,8 @@ Theater tiles: min-width 10rem (13rem on desktop), min-height 7rem, mono value, 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** land the visitor inside the list stage. The subtitle *Learn Python lists by playing with them.* lives in chrome, not a marketing hero.
-- **Do** keep orange scarce: Run, selection, changed cells.
+- **Do** land the visitor inside the list stage. The subtitle *Learn Python lists by playing with them.* lives in playground chrome, not a marketing hero.
+- **Do** keep orange scarce: Run, selection, changed cells. No page-level orange radial.
 - **Do** pair every operation with code, list state, explanation, and return or error.
 - **Do** use 44px targets on product controls and keep reduced motion as highlight/fade/outline.
 

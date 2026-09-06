@@ -51,7 +51,7 @@ function ToolbarTip({
   );
 }
 
-export function PlaygroundToolbar() {
+export function PlaygroundToolbar({ hasRunOnce }: { hasRunOnce: boolean }) {
   const animationSpeed = usePlaygroundStore((state) => state.animationSpeed);
   const undoEnabled = usePlaygroundStore((state) => canUndo(state));
   const redoEnabled = usePlaygroundStore((state) => canRedo(state));
@@ -68,6 +68,7 @@ export function PlaygroundToolbar() {
   const stepMode = usePlaygroundStore((state) => state.stepMode);
   const setXRayMode = usePlaygroundStore((state) => state.setXRayMode);
   const setStepMode = usePlaygroundStore((state) => state.setStepMode);
+  const selectedPreset = usePlaygroundStore((state) => state.selectedPreset);
   const [shareMessage, setShareMessage] = useState("");
 
   const activeChallenge = activeChallengeId
@@ -104,116 +105,134 @@ export function PlaygroundToolbar() {
         </Link>
       ) : null}
 
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <ToolbarTip label={xRayMode ? "Hide X-Ray" : "Show X-Ray"}>
-            <Toggle
-              variant="outline"
-              pressed={xRayMode}
-              onPressedChange={setXRayMode}
-              className={MODE_TOGGLE_CLASS}
-              aria-label="X-Ray mode"
-            >
-              X-Ray
-            </Toggle>
-          </ToolbarTip>
-
-          <ToolbarTip label={stepMode ? "Turn off Step mode" : "Turn on Step mode"}>
-            <Toggle
-              variant="outline"
-              pressed={stepMode}
-              onPressedChange={setStepMode}
-              className={MODE_TOGGLE_CLASS}
-              aria-label="Step mode"
-            >
-              Step
-            </Toggle>
-          </ToolbarTip>
-
-          <ToolbarTip label="Copy a shareable playground link">
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              onClick={() => {
-                void handleShare();
-              }}
-              aria-label="Share playground"
-            >
-              <Share2Icon data-icon="inline-start" />
-              Share
-            </Button>
-          </ToolbarTip>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <ToolbarTip label={undoLabel}>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              onClick={undo}
-              disabled={!undoEnabled}
-              aria-label="Undo"
-              title={undoLabel}
-            >
-              <Undo2Icon data-icon="inline-start" />
-              Undo
-            </Button>
-          </ToolbarTip>
-
-          <ToolbarTip label={redoLabel}>
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              onClick={redo}
-              disabled={!redoEnabled}
-              aria-label="Redo"
-              title={redoLabel}
-            >
-              <Redo2Icon data-icon="inline-start" />
-              Redo
-            </Button>
-          </ToolbarTip>
-
-          <ToolbarTip label="Reset playground">
-            <Button
-              type="button"
-              variant="outline"
-              className="min-h-11"
-              onClick={reset}
-              aria-label="Reset playground"
-              title="Reset playground"
-            >
-              <RotateCcwIcon data-icon="inline-start" />
-              Reset
-            </Button>
-          </ToolbarTip>
-
-          <ToggleGroup
-            value={[String(animationSpeed)]}
-            onValueChange={(next) => {
-              const selected = Number(next[0]);
-              if (isAnimationSpeed(selected)) {
-                setAnimationSpeed(selected);
-              }
-            }}
-            className="min-h-11 flex-wrap"
-            aria-label="Animation speed"
+      {!hasRunOnce && selectedPreset === null ? (
+        <ToolbarTip label="Reset playground">
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11"
+            onClick={reset}
+            aria-label="Reset playground"
+            title="Reset playground"
           >
-            {ANIMATION_SPEED_OPTIONS.map((speed) => (
-              <ToggleGroupItem
-                key={speed.value}
-                value={String(speed.value)}
-                className="min-h-11 min-w-11 px-2.5 font-mono text-xs data-[state=on]:border-primary data-[state=on]:bg-secondary data-[state=on]:text-foreground"
+            <RotateCcwIcon data-icon="inline-start" />
+            Reset
+          </Button>
+        </ToolbarTip>
+      ) : null}
+
+      {hasRunOnce ? (
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ToolbarTip label={xRayMode ? "Hide X-Ray" : "Show X-Ray"}>
+              <Toggle
+                variant="outline"
+                pressed={xRayMode}
+                onPressedChange={setXRayMode}
+                className={MODE_TOGGLE_CLASS}
+                aria-label="X-Ray mode"
               >
-                {speed.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
+                X-Ray
+              </Toggle>
+            </ToolbarTip>
+
+            <ToolbarTip label={stepMode ? "Turn off Step mode" : "Turn on Step mode"}>
+              <Toggle
+                variant="outline"
+                pressed={stepMode}
+                onPressedChange={setStepMode}
+                className={MODE_TOGGLE_CLASS}
+                aria-label="Step mode"
+              >
+                Step
+              </Toggle>
+            </ToolbarTip>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <ToolbarTip label={undoLabel}>
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11"
+                onClick={undo}
+                disabled={!undoEnabled}
+                aria-label="Undo"
+                title={undoLabel}
+              >
+                <Undo2Icon data-icon="inline-start" />
+                Undo
+              </Button>
+            </ToolbarTip>
+
+            <ToolbarTip label={redoLabel}>
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11"
+                onClick={redo}
+                disabled={!redoEnabled}
+                aria-label="Redo"
+                title={redoLabel}
+              >
+                <Redo2Icon data-icon="inline-start" />
+                Redo
+              </Button>
+            </ToolbarTip>
+
+            <ToolbarTip label="Copy a shareable playground link">
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11"
+                onClick={() => {
+                  void handleShare();
+                }}
+                aria-label="Share playground"
+              >
+                <Share2Icon data-icon="inline-start" />
+                Share
+              </Button>
+            </ToolbarTip>
+
+            <ToolbarTip label="Reset playground">
+              <Button
+                type="button"
+                variant="outline"
+                className="min-h-11"
+                onClick={reset}
+                aria-label="Reset playground"
+                title="Reset playground"
+              >
+                <RotateCcwIcon data-icon="inline-start" />
+                Reset
+              </Button>
+            </ToolbarTip>
+
+            <ToggleGroup
+              value={[String(animationSpeed)]}
+              onValueChange={(next) => {
+                const selected = Number(next[0]);
+                if (isAnimationSpeed(selected)) {
+                  setAnimationSpeed(selected);
+                }
+              }}
+              className="min-h-11 flex-wrap"
+              aria-label="Animation speed"
+            >
+              {ANIMATION_SPEED_OPTIONS.map((speed) => (
+                <ToggleGroupItem
+                  key={speed.value}
+                  value={String(speed.value)}
+                  className="min-h-11 min-w-11 px-2.5 font-mono text-xs data-[state=on]:border-primary data-[state=on]:bg-secondary data-[state=on]:text-foreground"
+                >
+                  {speed.label}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       <p className="sr-only" aria-live="polite">
         {shareMessage}

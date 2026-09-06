@@ -46,7 +46,7 @@ export type BuildRequestFailure = {
 export type BuildRequestResult = BuildRequestSuccess | BuildRequestFailure;
 
 export const PYTHON_VALUE_TYPE_OPTIONS = [
-  { value: "string", label: "str" },
+  { value: "string", label: "string" },
   { value: "number", label: "number" },
   { value: "boolean", label: "bool" },
   { value: "none", label: "None" },

@@ -47,7 +47,7 @@ export function ListCell({
       data-flip-id={item.id}
       data-cell-state={visualState}
       className={cn(
-        "flex min-w-40 shrink-0 flex-col items-center gap-2 md:min-w-52",
+        "group flex min-w-40 shrink-0 flex-col items-center gap-2 md:min-w-52",
         isEditing && "min-w-56 md:min-w-64",
         className,
       )}
@@ -74,7 +74,7 @@ export function ListCell({
             {formatPythonValue(item.value)}
           </div>
           {interactive && onStartEdit && onDelete ? (
-            <div className="flex gap-1">
+            <div data-cell-actions className="flex gap-1">
               <Button
                 type="button"
                 variant="ghost"

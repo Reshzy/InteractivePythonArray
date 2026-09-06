@@ -58,7 +58,7 @@ function CellRow({
   return (
     <ul
       data-track={track}
-      className="flex min-h-52 items-start justify-center gap-6 overflow-x-auto overscroll-x-contain pb-3 md:min-h-56 md:gap-8"
+      className="flex min-h-40 items-start justify-center gap-5 overflow-x-auto overscroll-x-contain pb-3 md:min-h-52 md:gap-8"
     >
       {items.map((item, index) => (
         <li key={item.id}>
@@ -93,7 +93,7 @@ function EmptyList() {
 function XRayPointer({ name }: { name: string }) {
   return (
     <div className="mb-3 flex flex-col items-start gap-1">
-      <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+      <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
         Variable
       </p>
       <p className="font-mono text-sm font-medium">{name}</p>
@@ -138,10 +138,10 @@ function XRayTrack({
       <XRayPointer name={name} />
       <div className="flex gap-3 overflow-x-auto overscroll-x-contain pb-1">
         <div className="flex shrink-0 flex-col justify-center gap-8 pt-1">
-          <p className="whitespace-nowrap text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+          <p className="whitespace-nowrap text-xs font-medium tracking-wider text-muted-foreground uppercase">
             Index
           </p>
-          <p className="whitespace-nowrap text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+          <p className="whitespace-nowrap text-xs font-medium tracking-wider text-muted-foreground uppercase">
             Value
           </p>
         </div>
@@ -223,7 +223,7 @@ export function ListVisualizer({
       data-visualizer-error={visualizerError ? "true" : "false"}
       aria-label="List"
       className={cn(
-        "flex min-h-[46vh] flex-col justify-center py-4 md:min-h-[52vh]",
+        "flex flex-col justify-center py-2",
         visualizerError && "rounded-xl outline-2 outline-destructive/50",
       )}
     >
@@ -319,30 +319,37 @@ export function ListVisualizer({
           {displayList.length === 0 && incoming.length === 0 ? (
             <EmptyList />
           ) : (
-            <div className="flex items-start gap-5 overflow-x-auto overscroll-x-contain pb-1">
-              {displayList.length === 0 ? (
-                <EmptyList />
-              ) : (
-                <CellRow
-                  items={displayList}
-                  track="list"
-                  interactive={interactive}
-                  cellStates={cellStates}
-                  {...cellHandlers}
-                />
-              )}
-              {incoming.length > 0 ? (
-                <CellRow
-                  items={incoming}
-                  track="incoming"
-                  interactive={false}
-                  editingId={null}
-                  onStartEdit={() => undefined}
-                  onCancelEdit={() => undefined}
-                  onSave={() => undefined}
-                  onDelete={() => undefined}
-                />
-              ) : null}
+            <div className="relative min-w-0">
+              <div className="flex items-start gap-5 overflow-x-auto overscroll-x-contain pb-1">
+                {displayList.length === 0 ? (
+                  <EmptyList />
+                ) : (
+                  <CellRow
+                    items={displayList}
+                    track="list"
+                    interactive={interactive}
+                    cellStates={cellStates}
+                    {...cellHandlers}
+                  />
+                )}
+                {incoming.length > 0 ? (
+                  <CellRow
+                    items={incoming}
+                    track="incoming"
+                    interactive={false}
+                    editingId={null}
+                    onStartEdit={() => undefined}
+                    onCancelEdit={() => undefined}
+                    onSave={() => undefined}
+                    onDelete={() => undefined}
+                  />
+                ) : null}
+              </div>
+              <div
+                aria-hidden="true"
+                data-cell-row-fade
+                className="pointer-events-none absolute inset-y-0 right-0 w-10 md:hidden"
+              />
             </div>
           )}
         </>

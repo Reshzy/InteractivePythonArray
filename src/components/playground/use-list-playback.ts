@@ -21,6 +21,7 @@ import {
   type VisualCommit,
 } from "@/lib/animations/runtime";
 import { BASE_DURATIONS, scaleDuration } from "@/lib/animations/timing";
+import { heldCellStatesFromResult } from "@/lib/playground/held-states";
 import { cellVisualStateAt } from "@/lib/playground/steps";
 import { cloneList } from "@/lib/python";
 import type { ListItem } from "@/lib/python/types";
@@ -59,6 +60,8 @@ function createOverlay(sessionId: number): PlaybackVisual {
 
 export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
   const list = usePlaygroundStore((state) => state.list);
+  const lastResult = usePlaygroundStore((state) => state.lastResult);
+  const resultView = usePlaygroundStore((state) => state.resultView);
   const isAnimating = usePlaygroundStore((state) => state.isAnimating);
   const sessionId = usePlaygroundStore((state) => state.playbackSessionId);
   const playbackFrom = usePlaygroundStore((state) => state.playbackFrom);
@@ -324,7 +327,9 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
 
   const cellStates = currentStep
     ? displayList.map((_, index) => cellVisualStateAt(currentStep, index))
-    : undefined;
+    : !isAnimating && resultView !== "undone"
+      ? heldCellStatesFromResult(lastResult, displayList.length)
+      : undefined;
 
   return {
     displayList,
@@ -337,7 +342,11 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
       : overlay.secondaryLabels,
     scanCount: currentStep ? (currentStep.scanCount ?? null) : scanCount,
     disclaimer: currentStep ? (currentStep.disclaimer ?? null) : disclaimer,
-    visualizerError: currentStep ? Boolean(currentStep.error) : visualizerError,
+    visualizerError: currentStep
+      ? Boolean(currentStep.error)
+      : !isAnimating && resultView !== "undone"
+        ? Boolean(lastResult?.error)
+        : visualizerError,
     interactive: !isAnimating && !currentStep,
     cellStates,
   };

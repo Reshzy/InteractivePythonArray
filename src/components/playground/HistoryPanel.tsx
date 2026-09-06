@@ -46,6 +46,11 @@ export function HistoryPanel({
                   {String(index + 1).padStart(2, "0")}{" "}
                 </span>
                 {entry.code}
+                {isFuture ? (
+                  <span className="text-muted-foreground"> · undone</span>
+                ) : isCurrent ? (
+                  <span className="text-muted-foreground"> · current</span>
+                ) : null}
               </li>
             );
           })}

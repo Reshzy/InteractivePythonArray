@@ -75,7 +75,7 @@ const VALUE_ARGUMENT: ArgumentDefinition = {
   label: "Value",
   kind: "value",
   required: true,
-  description: "The Python value to use with this operation.",
+  description: "The value this method will add, find, or remove.",
 };
 
 const INDEX_ARGUMENT: ArgumentDefinition = {
@@ -211,7 +211,8 @@ export const METHODS: readonly MethodDefinition[] = [
     category: "add",
     syntax: "list.append(value)",
     shortDescription: "Adds one item to the end of a list.",
-    explanation: "append() adds a single value to the end and returns None.",
+    explanation:
+      "append() adds a single value to the end. It returns None — no new value, because the list itself changed.",
     mutates: true,
     returnType: "None",
     difficulty: "beginner",

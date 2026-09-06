@@ -29,11 +29,11 @@ export function Header() {
         >
           <span
             aria-hidden="true"
-            className="inline-flex size-6 shrink-0 items-center justify-center rounded-sm border border-foreground/20 font-mono text-[0.65rem] text-muted-foreground"
+            className="hidden size-6 shrink-0 items-center justify-center rounded-sm border border-foreground/20 sm:inline-flex"
           >
             <span className="size-2 rounded-xs bg-primary" />
           </span>
-          <span className="truncate">Python Lists Playground</span>
+          <span className="truncate whitespace-nowrap">Python Lists Playground</span>
         </Link>
 
         <div className="flex shrink-0 items-center gap-1">

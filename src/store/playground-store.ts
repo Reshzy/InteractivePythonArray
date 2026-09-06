@@ -17,6 +17,7 @@ import {
   DEFAULT_PRESET_ID,
   getPreset,
   isPresetId,
+  resolvePresetSelection,
   type PresetId,
 } from "@/data/presets";
 import {
@@ -67,16 +68,20 @@ export type HistoryEntry = {
   timestamp: number;
 };
 
+export type ResultView = "preview" | "live" | "undone";
+
 export type PlaygroundState = {
   variableName: string;
   list: ListItem[];
   selectedMethod: MethodId;
   arguments: OperationArguments;
   lastResult: OperationResult | null;
+  resultView: ResultView;
   history: HistoryEntry[];
   historyIndex: number;
   animationSpeed: AnimationSpeed;
   selectedPreset: PresetId | null;
+  presetSource: PresetId | null;
   hasHydrated: boolean;
   isAnimating: boolean;
   playbackKind: PlaybackKind;
@@ -98,6 +103,7 @@ export type PersistedPlaygroundState = {
   arguments: OperationArguments;
   animationSpeed: AnimationSpeed;
   selectedPreset: PresetId | null;
+  presetSource: PresetId | null;
   xRayMode: boolean;
   stepMode: boolean;
 };
@@ -149,10 +155,12 @@ export function createDefaultPlaygroundState(): PlaygroundState {
     selectedMethod: "append",
     arguments: createDefaultArguments(),
     lastResult: null,
+    resultView: "preview",
     history: [],
     historyIndex: -1,
     animationSpeed: DEFAULT_ANIMATION_SPEED,
     selectedPreset: DEFAULT_PRESET_ID,
+    presetSource: DEFAULT_PRESET_ID,
     hasHydrated: false,
     isAnimating: false,
     playbackKind: "idle",
@@ -217,6 +225,14 @@ export function canRedo(
   state: Pick<PlaygroundState, "history" | "historyIndex">,
 ): boolean {
   return state.historyIndex < state.history.length - 1;
+}
+
+function presetFields(
+  list: readonly ListItem[],
+  variableName: string,
+  presetSource: PresetId | null,
+): Pick<PlaygroundState, "selectedPreset" | "presetSource"> {
+  return resolvePresetSelection(list, variableName, presetSource);
 }
 
 export function canStepBack(
@@ -284,7 +300,11 @@ export function createPlaygroundApi(
 
     setHasHydrated: (hasHydrated) => set({ hasHydrated }),
 
-    setVariableName: (variableName) => set({ variableName }),
+    setVariableName: (variableName) =>
+      set((state) => ({
+        variableName,
+        ...presetFields(state.list, variableName, state.presetSource),
+      })),
 
     setSelectedMethod: (method) => {
       const state = get();
@@ -296,6 +316,7 @@ export function createPlaygroundApi(
         selectedMethod: method,
         arguments: argumentsForMethod(method, latest.arguments),
         lastResult: null,
+        resultView: "preview",
       });
     },
 
@@ -382,31 +403,43 @@ export function createPlaygroundApi(
     },
 
     addListItem: (value) => {
-      set((state) => ({
-        list: [...state.list, createListItem(value)],
-        selectedPreset: null,
-        lastResult: null,
-      }));
+      set((state) => {
+        const list = [...state.list, createListItem(value)];
+        return {
+          list,
+          lastResult: null,
+          resultView: "preview",
+          ...presetFields(list, state.variableName, state.presetSource),
+        };
+      });
     },
 
     updateListItem: (id, value) => {
-      set((state) => ({
-        list: state.list.map((item) =>
+      set((state) => {
+        const list = state.list.map((item) =>
           item.id === id
             ? { id: item.id, value: clonePythonValue(value) }
             : item,
-        ),
-        selectedPreset: null,
-        lastResult: null,
-      }));
+        );
+        return {
+          list,
+          lastResult: null,
+          resultView: "preview",
+          ...presetFields(list, state.variableName, state.presetSource),
+        };
+      });
     },
 
     removeListItem: (id) => {
-      set((state) => ({
-        list: state.list.filter((item) => item.id !== id),
-        selectedPreset: null,
-        lastResult: null,
-      }));
+      set((state) => {
+        const list = state.list.filter((item) => item.id !== id);
+        return {
+          list,
+          lastResult: null,
+          resultView: "preview",
+          ...presetFields(list, state.variableName, state.presetSource),
+        };
+      });
     },
 
     executeOperation: () => {
@@ -438,7 +471,12 @@ export function createPlaygroundApi(
         set({
           list: cloneList(result.after),
           lastResult: result,
-          selectedPreset: result.mutates ? null : state.selectedPreset,
+          resultView: "live",
+          ...presetFields(
+            result.after,
+            state.variableName,
+            state.presetSource,
+          ),
           ...pushHistory(state, entry),
           ...startPlaybackSession(state, "step", false, result.before),
           steps,
@@ -451,7 +489,12 @@ export function createPlaygroundApi(
       set({
         list: cloneList(result.after),
         lastResult: result,
-        selectedPreset: result.mutates ? null : state.selectedPreset,
+        resultView: "live",
+        ...presetFields(
+          result.after,
+          state.variableName,
+          state.presetSource,
+        ),
         ...pushHistory(state, entry),
         ...idleStepFields(),
         ...startPlaybackSession(
@@ -475,12 +518,14 @@ export function createPlaygroundApi(
       }
 
       const previous = state.history[state.historyIndex - 1];
+      const restored = cloneList(entry.before);
 
       set({
-        list: cloneList(entry.before),
-        lastResult: previous?.result ?? null,
+        list: restored,
+        lastResult: previous?.result ?? entry.result,
+        resultView: previous ? "live" : "undone",
         historyIndex: state.historyIndex - 1,
-        selectedPreset: null,
+        ...presetFields(restored, state.variableName, state.presetSource),
         ...idleStepFields(),
         ...startPlaybackSession(state, "undo", true, state.list),
       });
@@ -501,8 +546,9 @@ export function createPlaygroundApi(
       set({
         list: cloneList(entry.after),
         lastResult: entry.result,
+        resultView: "live",
         historyIndex: nextIndex,
-        selectedPreset: null,
+        ...presetFields(entry.after, state.variableName, state.presetSource),
         ...idleStepFields(),
         ...startPlaybackSession(state, "redo", true, state.list),
       });
@@ -532,7 +578,9 @@ export function createPlaygroundApi(
         variableName: preset.variableName,
         list: createPresetList(id),
         selectedPreset: id,
+        presetSource: id,
         lastResult: null,
+        resultView: "preview",
         history: [],
         historyIndex: -1,
         arguments: argumentsForMethod(state.selectedMethod, state.arguments),
@@ -552,7 +600,9 @@ export function createPlaygroundApi(
         list: createList(tryIt.list),
         arguments: argumentsFromTryIt(method, tryIt),
         lastResult: null,
+        resultView: "preview",
         selectedPreset: null,
+        presetSource: null,
         activeChallengeId: null,
         isAnimating: false,
         playbackKind: "idle",
@@ -573,7 +623,9 @@ export function createPlaygroundApi(
         list: createList(challenge.initialList),
         arguments: argumentsFromTryIt(method, challenge.setup),
         lastResult: null,
+        resultView: "preview",
         selectedPreset: null,
+        presetSource: null,
         history: [],
         historyIndex: -1,
         activeChallengeId: challenge.id,
@@ -649,7 +701,9 @@ export function createPlaygroundApi(
         selectedMethod: snapshot.selectedMethod,
         arguments: cloneArguments(snapshot.arguments),
         selectedPreset: snapshot.selectedPreset,
+        presetSource: snapshot.selectedPreset,
         lastResult: null,
+        resultView: "preview",
         history: [],
         historyIndex: -1,
         activeChallengeId: null,
@@ -796,6 +850,7 @@ export function parsePersistedState(
     arguments?: unknown;
     animationSpeed?: unknown;
     selectedPreset?: unknown;
+    presetSource?: unknown;
     xRayMode?: unknown;
     stepMode?: unknown;
   };
@@ -827,6 +882,19 @@ export function parsePersistedState(
     return null;
   }
 
+  const presetSource =
+    candidate.presetSource === undefined
+      ? candidate.selectedPreset
+      : candidate.presetSource === null
+        ? null
+        : isPresetId(candidate.presetSource)
+          ? candidate.presetSource
+          : null;
+
+  if (candidate.presetSource !== undefined && candidate.presetSource !== null && !isPresetId(candidate.presetSource)) {
+    return null;
+  }
+
   return {
     variableName: candidate.variableName,
     list: candidate.list.map((item) => ({
@@ -837,6 +905,7 @@ export function parsePersistedState(
     arguments: cloneArguments(candidate.arguments),
     animationSpeed: candidate.animationSpeed,
     selectedPreset: candidate.selectedPreset,
+    presetSource,
     xRayMode: candidate.xRayMode === true,
     stepMode: candidate.stepMode === true,
   };
@@ -856,6 +925,7 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
         arguments: state.arguments,
         animationSpeed: state.animationSpeed,
         selectedPreset: state.selectedPreset,
+        presetSource: state.presetSource,
         xRayMode: state.xRayMode,
         stepMode: state.stepMode,
       }),
