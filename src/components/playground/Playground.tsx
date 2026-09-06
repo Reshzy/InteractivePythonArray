@@ -7,6 +7,7 @@ import {
   registerGsapPlugins,
   useGSAP,
 } from "@/lib/animations/gsap-client";
+import { isRunLocked } from "@/lib/animations/playback";
 import { usePlaygroundStore } from "@/store/playground-store";
 
 import { CodePanel } from "./CodePanel";
@@ -16,6 +17,7 @@ import { MethodControls } from "./MethodControls";
 import { MethodNavigation } from "./MethodNavigation";
 import { PlaygroundToolbar } from "./PlaygroundToolbar";
 import { ResultPanel } from "./ResultPanel";
+import { useListPlayback } from "./use-list-playback";
 
 registerGsapPlugins();
 
@@ -31,6 +33,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 
 export function Playground() {
   const playgroundRef = useRef<HTMLElement>(null);
+  const playback = useListPlayback(playgroundRef);
 
   useEffect(() => {
     void Promise.resolve(usePlaygroundStore.persist.rehydrate()).finally(() => {
@@ -47,7 +50,10 @@ export function Playground() {
 
       if (event.key === "Enter") {
         event.preventDefault();
-        usePlaygroundStore.getState().executeOperation();
+        const state = usePlaygroundStore.getState();
+        if (!isRunLocked(state)) {
+          state.executeOperation();
+        }
         return;
       }
 
@@ -104,7 +110,7 @@ export function Playground() {
         mm.revert();
       };
     },
-    { scope: playgroundRef }
+    { scope: playgroundRef },
   );
 
   return (
@@ -120,7 +126,16 @@ export function Playground() {
       >
         <PlaygroundToolbar />
 
-        <ListVisualizer />
+        <ListVisualizer
+          displayList={playback.displayList}
+          incoming={playback.incoming}
+          secondary={playback.secondary}
+          secondaryLabels={playback.secondaryLabels}
+          scanCount={playback.scanCount}
+          disclaimer={playback.disclaimer}
+          visualizerError={playback.visualizerError}
+          interactive={playback.interactive}
+        />
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start">
           <div className="flex flex-col gap-4">

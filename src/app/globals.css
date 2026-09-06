@@ -173,4 +173,50 @@
   .skip-link {
     @apply sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground;
   }
+
+  [data-cell-body] {
+    transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+  }
+
+  [data-list-cell][data-cell-state="scanned"] [data-cell-body] {
+    border-color: color-mix(in oklab, var(--primary) 45%, var(--border));
+    background-color: color-mix(in oklab, var(--primary) 8%, var(--card));
+  }
+
+  [data-list-cell][data-cell-state="matched"] [data-cell-body],
+  [data-list-cell][data-cell-state="inserted"] [data-cell-body],
+  [data-list-cell][data-cell-state="moved"] [data-cell-body],
+  [data-list-cell][data-cell-state="returned"] [data-cell-body] {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+    background-color: color-mix(in oklab, var(--primary) 12%, var(--card));
+  }
+
+  [data-list-cell][data-cell-state="removed"] [data-cell-body],
+  [data-list-cell][data-cell-state="error"] [data-cell-body] {
+    border-color: var(--destructive);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 22%, transparent);
+  }
+
+  [data-list-cell][data-cell-state="active-index"] [data-cell-body] {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 40%, transparent);
+  }
+
+  [data-list-cell][data-cell-state="matched"] [data-cell-index],
+  [data-list-cell][data-cell-state="active-index"] [data-cell-index],
+  [data-list-cell][data-cell-state="inserted"] [data-cell-index] {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  [data-list-visualizer][data-visualizer-error="true"] {
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 35%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-cell-body] {
+      transition: none;
+    }
+  }
 }

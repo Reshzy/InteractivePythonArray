@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ValueField } from "@/components/playground/ValueField";
+import type { CellVisualState } from "@/lib/animations/highlights";
 import {
   isPlaygroundError,
   parseValueDraft,
@@ -19,10 +20,12 @@ type ListCellProps = {
   item: ListItem;
   index: number;
   isEditing: boolean;
-  onStartEdit: () => void;
-  onCancelEdit: () => void;
-  onSave: (value: PythonValue) => void;
-  onDelete: () => void;
+  interactive?: boolean;
+  visualState?: CellVisualState;
+  onStartEdit?: () => void;
+  onCancelEdit?: () => void;
+  onSave?: (value: PythonValue) => void;
+  onDelete?: () => void;
   className?: string;
 };
 
@@ -30,6 +33,8 @@ export function ListCell({
   item,
   index,
   isEditing,
+  interactive = true,
+  visualState = "idle",
   onStartEdit,
   onCancelEdit,
   onSave,
@@ -39,14 +44,21 @@ export function ListCell({
   return (
     <div
       data-list-cell
+      data-flip-id={item.id}
+      data-cell-state={visualState}
       className={cn(
         "flex min-w-28 shrink-0 flex-col items-center gap-1.5",
         isEditing && "min-w-56",
         className,
       )}
     >
-      <span className="font-mono text-xs text-muted-foreground">{index}</span>
-      {isEditing ? (
+      <span
+        data-cell-index
+        className="font-mono text-xs text-muted-foreground"
+      >
+        {index}
+      </span>
+      {isEditing && onCancelEdit && onSave ? (
         <ListCellEditor
           item={item}
           index={index}
@@ -55,31 +67,36 @@ export function ListCell({
         />
       ) : (
         <>
-          <div className="flex min-h-16 w-full items-center justify-center rounded-xl border border-border bg-card px-4 py-3 font-mono text-sm shadow-sm">
+          <div
+            data-cell-body
+            className="flex min-h-16 w-full items-center justify-center rounded-xl border border-border bg-card px-4 py-3 font-mono text-sm shadow-sm"
+          >
             {formatPythonValue(item.value)}
           </div>
-          <div className="flex gap-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="min-h-11 min-w-11"
-              onClick={onStartEdit}
-              aria-label={`Edit item ${index}`}
-            >
-              <PencilIcon />
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="min-h-11 min-w-11"
-              onClick={onDelete}
-              aria-label={`Delete item ${index}`}
-            >
-              <Trash2Icon />
-            </Button>
-          </div>
+          {interactive && onStartEdit && onDelete ? (
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="min-h-11 min-w-11"
+                onClick={onStartEdit}
+                aria-label={`Edit item ${index}`}
+              >
+                <PencilIcon />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="min-h-11 min-w-11"
+                onClick={onDelete}
+                aria-label={`Delete item ${index}`}
+              >
+                <Trash2Icon />
+              </Button>
+            </div>
+          ) : null}
         </>
       )}
     </div>

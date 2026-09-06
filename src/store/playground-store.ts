@@ -24,6 +24,10 @@ import {
   type OperationArguments,
   type ValueDraft,
 } from "@/lib/playground/arguments";
+import { isRunLocked, type PlaybackKind } from "@/lib/animations/playback";
+
+export { isRunLocked };
+import { prefersReducedMotion } from "@/lib/animations/reduced-motion";
 import {
   cloneList,
   clonePythonValue,
@@ -63,6 +67,11 @@ export type PlaygroundState = {
   animationSpeed: AnimationSpeed;
   selectedPreset: PresetId | null;
   hasHydrated: boolean;
+  isAnimating: boolean;
+  playbackKind: PlaybackKind;
+  resultRevealed: boolean;
+  playbackSessionId: number;
+  playbackFrom: ListItem[] | null;
 };
 
 export type PersistedPlaygroundState = {
@@ -94,6 +103,9 @@ export type PlaygroundActions = {
   reset: () => void;
   loadPreset: (id: PresetId) => void;
   setAnimationSpeed: (animationSpeed: AnimationSpeed) => void;
+  completePlayback: () => void;
+  revealResult: () => void;
+  cancelPlayback: () => void;
 };
 
 export type PlaygroundStore = PlaygroundState & PlaygroundActions;
@@ -115,6 +127,33 @@ export function createDefaultPlaygroundState(): PlaygroundState {
     animationSpeed: DEFAULT_ANIMATION_SPEED,
     selectedPreset: DEFAULT_PRESET_ID,
     hasHydrated: false,
+    isAnimating: false,
+    playbackKind: "idle",
+    resultRevealed: true,
+    playbackSessionId: 0,
+    playbackFrom: null,
+  };
+}
+
+function startPlaybackSession(
+  state: PlaygroundState,
+  kind: PlaybackKind,
+  resultRevealed: boolean,
+  playbackFrom: ListItem[],
+): Pick<
+  PlaygroundState,
+  | "isAnimating"
+  | "playbackKind"
+  | "resultRevealed"
+  | "playbackSessionId"
+  | "playbackFrom"
+> {
+  return {
+    isAnimating: true,
+    playbackKind: kind,
+    resultRevealed,
+    playbackSessionId: state.playbackSessionId + 1,
+    playbackFrom: cloneList(playbackFrom),
   };
 }
 
@@ -304,6 +343,10 @@ export function createPlaygroundApi(
 
     executeOperation: () => {
       const state = get();
+      if (isRunLocked(state)) {
+        return;
+      }
+
       const built = buildOperationRequest({
         list: state.list,
         variableName: state.variableName,
@@ -322,6 +365,12 @@ export function createPlaygroundApi(
         lastResult: result,
         selectedPreset: result.mutates ? null : state.selectedPreset,
         ...pushHistory(state, entry),
+        ...startPlaybackSession(
+          state,
+          "operation",
+          prefersReducedMotion(),
+          result.before,
+        ),
       });
     },
 
@@ -343,6 +392,7 @@ export function createPlaygroundApi(
         lastResult: previous?.result ?? null,
         historyIndex: state.historyIndex - 1,
         selectedPreset: null,
+        ...startPlaybackSession(state, "undo", true, state.list),
       });
     },
 
@@ -363,15 +413,21 @@ export function createPlaygroundApi(
         lastResult: entry.result,
         historyIndex: nextIndex,
         selectedPreset: null,
+        ...startPlaybackSession(state, "redo", true, state.list),
       });
     },
 
     reset: () => {
-      const { animationSpeed, hasHydrated } = get();
+      const current = get();
       set({
         ...createDefaultPlaygroundState(),
-        animationSpeed,
-        hasHydrated,
+        animationSpeed: current.animationSpeed,
+        hasHydrated: current.hasHydrated,
+        isAnimating: true,
+        playbackKind: "reset",
+        resultRevealed: true,
+        playbackSessionId: current.playbackSessionId + 1,
+        playbackFrom: cloneList(current.list),
       });
     },
 
@@ -387,10 +443,36 @@ export function createPlaygroundApi(
         history: [],
         historyIndex: -1,
         arguments: argumentsForMethod(state.selectedMethod, state.arguments),
+        ...startPlaybackSession(state, "preset", true, state.list),
       });
     },
 
     setAnimationSpeed: (animationSpeed) => set({ animationSpeed }),
+
+    completePlayback: () =>
+      set({
+        isAnimating: false,
+        playbackKind: "idle",
+        resultRevealed: true,
+        playbackFrom: null,
+      }),
+
+    revealResult: () => set({ resultRevealed: true }),
+
+    cancelPlayback: () => {
+      const state = get();
+      if (!state.isAnimating) {
+        return;
+      }
+
+      set({
+        isAnimating: false,
+        playbackKind: "idle",
+        resultRevealed: true,
+        playbackFrom: null,
+        playbackSessionId: state.playbackSessionId + 1,
+      });
+    },
   };
 }
 

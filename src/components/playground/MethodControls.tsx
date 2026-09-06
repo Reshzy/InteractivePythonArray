@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ValueField } from "@/components/playground/ValueField";
 import { getMethod } from "@/data/methods";
+import { isRunLocked } from "@/lib/animations/playback";
 import { usePlaygroundStore } from "@/store/playground-store";
 
 export function MethodControls() {
@@ -29,6 +30,10 @@ export function MethodControls() {
     (state) => state.removeExtendValue,
   );
   const execute = usePlaygroundStore((state) => state.executeOperation);
+  const isAnimating = usePlaygroundStore((state) => state.isAnimating);
+  const playbackKind = usePlaygroundStore((state) => state.playbackKind);
+  const lastResult = usePlaygroundStore((state) => state.lastResult);
+  const runLocked = isRunLocked({ isAnimating, playbackKind, lastResult });
 
   const method = getMethod(selectedMethod);
 
@@ -160,6 +165,7 @@ export function MethodControls() {
         type="button"
         className="min-h-11 w-full"
         onClick={execute}
+        disabled={runLocked}
       >
         <PlayIcon data-icon="inline-start" />
         Run {method.label}

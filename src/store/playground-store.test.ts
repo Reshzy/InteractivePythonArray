@@ -80,12 +80,14 @@ describe("playground store", () => {
     const store = createPlaygroundStore();
 
     store.getState().executeOperation();
+    store.getState().completePlayback();
     store.getState().setValueDraft({
       type: "string",
       text: "kiwi",
       booleanValue: true,
     });
     store.getState().executeOperation();
+    store.getState().completePlayback();
     expect(store.getState().history).toHaveLength(2);
 
     store.getState().undo();
@@ -97,6 +99,7 @@ describe("playground store", () => {
       booleanValue: true,
     });
     store.getState().executeOperation();
+    store.getState().completePlayback();
 
     expect(store.getState().history).toHaveLength(2);
     expect(store.getState().history[1]?.code).toBe('fruits.append("pear")');
@@ -185,6 +188,38 @@ describe("playground store", () => {
 
     expect(store.getState().lastResult?.error?.type).toBe("TypeError");
     expect(store.getState().list).toHaveLength(3);
+  });
+
+  it("ignores Run while a mutation animation is playing", () => {
+    const store = createPlaygroundStore();
+    store.getState().executeOperation();
+
+    const afterFirst = ids(store);
+    expect(store.getState().isAnimating).toBe(true);
+    expect(store.getState().resultRevealed).toBe(false);
+
+    store.getState().executeOperation();
+    expect(ids(store)).toEqual(afterFirst);
+    expect(store.getState().history).toHaveLength(1);
+
+    store.getState().completePlayback();
+    expect(store.getState().isAnimating).toBe(false);
+    expect(store.getState().resultRevealed).toBe(true);
+
+    store.getState().executeOperation();
+    expect(store.getState().list).toHaveLength(5);
+  });
+
+  it("allows undo during a mutation animation without replaying the method", () => {
+    const store = createPlaygroundStore();
+    const originalIds = ids(store);
+    store.getState().executeOperation();
+    expect(store.getState().playbackKind).toBe("operation");
+
+    store.getState().undo();
+    expect(ids(store)).toEqual(originalIds);
+    expect(store.getState().playbackKind).toBe("undo");
+    expect(store.getState().resultRevealed).toBe(true);
   });
 });
 
