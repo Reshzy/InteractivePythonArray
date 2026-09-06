@@ -65,6 +65,7 @@ export function unsupportedSortError(): PlaygroundError {
   return typeError(
     "'<' not supported between instances of mixed types",
     "Python cannot sort this list because it mixes types that cannot be compared.",
+    "Sort a list of only numbers, only strings, or only booleans.",
   );
 }
 
@@ -72,5 +73,6 @@ export function integerIndexError(method: "insert" | "pop"): PlaygroundError {
   return typeError(
     `${method} index must be an integer`,
     "Python list indices must be whole numbers.",
+    "Enter a whole number such as 0, 1, or -1.",
   );
 }

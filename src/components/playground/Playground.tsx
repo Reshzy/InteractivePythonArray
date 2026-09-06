@@ -117,8 +117,9 @@ export function Playground() {
     <section
       ref={playgroundRef}
       id="playground"
+      tabIndex={-1}
       aria-labelledby="playground-heading"
-      className="scroll-mt-20 px-4 py-6 md:py-10"
+      className="scroll-mt-20 px-4 py-6 md:py-10 outline-none"
     >
       <div
         data-playground-shell

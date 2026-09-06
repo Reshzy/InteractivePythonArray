@@ -288,7 +288,8 @@ describe("index", () => {
     });
 
     expect(result.error?.type).toBe("ValueError");
-    expect(result.error?.friendlyMessage).toMatch(/could not find/i);
+    expect(result.error?.friendlyMessage).toMatch(/not in the list/);
+    expect(result.error?.guidance).toMatch(/Try adding/);
     expect(result.mutates).toBe(false);
     expect(result.after.map((item) => item.value)).toEqual([
       pythonString("apple"),
@@ -441,13 +442,18 @@ describe("pop", () => {
   it("returns IndexError for an out-of-range index", () => {
     const result = executeOperation({
       method: "pop",
-      list: createList([pythonNumber(1)]),
+      list: createList([pythonNumber(1), pythonNumber(2), pythonNumber(3)]),
       args: { index: 5 },
     });
 
     expect(result.error?.type).toBe("IndexError");
     expect(result.error?.message).toBe("pop index out of range");
-    expect(result.after.map((item) => item.value)).toEqual([pythonNumber(1)]);
+    expect(result.error?.guidance).toMatch(/0 through 2/);
+    expect(result.after.map((item) => item.value)).toEqual([
+      pythonNumber(1),
+      pythonNumber(2),
+      pythonNumber(3),
+    ]);
   });
 
   it("returns IndexError for an empty list", () => {
@@ -458,6 +464,7 @@ describe("pop", () => {
 
     expect(result.error?.type).toBe("IndexError");
     expect(result.error?.message).toBe("pop from empty list");
+    expect(result.error?.guidance).toMatch(/append/i);
     expect(result.mutates).toBe(false);
   });
 });
@@ -498,6 +505,7 @@ describe("remove", () => {
 
     expect(result.error?.type).toBe("ValueError");
     expect(result.error?.friendlyMessage).toMatch(/not in the list/);
+    expect(result.error?.guidance).toMatch(/Try adding "kiwi"/);
     expect(result.mutates).toBe(false);
   });
 });
@@ -644,12 +652,14 @@ describe("generated code and errors", () => {
       "ValueError",
       "x is not in list",
       "Python could not find that value in the list.",
+      "Try adding that value first.",
     );
 
     expect(error).toEqual({
       type: "ValueError",
       message: "x is not in list",
       friendlyMessage: "Python could not find that value in the list.",
+      guidance: "Try adding that value first.",
     });
   });
 });

@@ -1,4 +1,8 @@
-import type { MethodId } from "@/lib/python/types";
+import type { MethodId, PythonValue } from "@/lib/python/types";
+import {
+  pythonNumber,
+  pythonString,
+} from "@/lib/python/values";
 
 export type MethodCategory =
   | "builtin"
@@ -20,6 +24,21 @@ export type ArgumentDefinition = {
 
 export type MethodDifficulty = "beginner" | "intermediate";
 
+export type MethodExample = {
+  setup: string;
+  call: string;
+  result: string;
+};
+
+export type MethodTryIt = {
+  variableName: string;
+  list: readonly PythonValue[];
+  value?: PythonValue;
+  values?: readonly PythonValue[];
+  indexText?: string;
+  reverse?: boolean;
+};
+
 export type MethodDefinition = {
   id: MethodId;
   label: string;
@@ -31,6 +50,10 @@ export type MethodDefinition = {
   returnType: string;
   difficulty: MethodDifficulty;
   argumentSchema: ArgumentDefinition[];
+  example: MethodExample;
+  complexity: string;
+  advanced: readonly string[];
+  tryIt: MethodTryIt;
   commonMistakes?: string[];
   comparisonWith?: string[];
 };
@@ -87,6 +110,27 @@ const REVERSE_ARGUMENT: ArgumentDefinition = {
   description: "When True, sort from largest to smallest.",
 };
 
+const FRUITS_LIST = [
+  pythonString("apple"),
+  pythonString("banana"),
+  pythonString("orange"),
+] as const;
+
+const NUMBERS_LIST = [
+  pythonNumber(8),
+  pythonNumber(3),
+  pythonNumber(12),
+  pythonNumber(1),
+] as const;
+
+const DUPLICATES_LIST = [
+  pythonString("A"),
+  pythonString("B"),
+  pythonString("A"),
+  pythonString("C"),
+  pythonString("A"),
+] as const;
+
 export function isMethodId(value: unknown): value is MethodId {
   return typeof value === "string" && METHODS.some((method) => method.id === value);
 }
@@ -97,6 +141,10 @@ export function getMethod(id: MethodId): MethodDefinition {
     throw new Error(`Unknown method: ${id}`);
   }
   return method;
+}
+
+export function isBuiltinOperation(method: MethodDefinition): boolean {
+  return method.category === "builtin";
 }
 
 export const METHODS: readonly MethodDefinition[] = [
@@ -111,6 +159,19 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "int",
     difficulty: "beginner",
     argumentSchema: [],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: "len(fruits)",
+      result: "3",
+    },
+    complexity: "Average O(1)",
+    advanced: [
+      "len() is a built-in function, not a list method. Write len(fruits), not fruits.len().",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+    },
   },
   {
     id: "sorted",
@@ -124,6 +185,21 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "list",
     difficulty: "intermediate",
     argumentSchema: [REVERSE_ARGUMENT],
+    example: {
+      setup: "numbers = [8, 3, 12, 1]",
+      call: "sorted(numbers)",
+      result: "[1, 3, 8, 12]",
+    },
+    complexity: "Average O(n log n)",
+    advanced: [
+      "sorted() is a built-in. It returns a new list and leaves the original unchanged.",
+      "Python cannot sort mixed types such as numbers and strings together.",
+    ],
+    tryIt: {
+      variableName: "numbers",
+      list: NUMBERS_LIST,
+      reverse: false,
+    },
     commonMistakes: [
       "sorted() does not change the original list. Assign the result if you need it.",
     ],
@@ -140,6 +216,20 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "beginner",
     argumentSchema: [VALUE_ARGUMENT],
+    example: {
+      setup: `fruits = ["apple", "banana"]`,
+      call: `fruits.append("mango")`,
+      result: `["apple", "banana", "mango"]`,
+    },
+    complexity: "Average O(1)",
+    advanced: [
+      "append() adds exactly one item. If that item is itself a list, the whole list becomes one nested item.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+      value: pythonString("mango"),
+    },
     commonMistakes: [
       "append() adds one item. Use extend() to add each item from another list.",
     ],
@@ -157,6 +247,20 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "beginner",
     argumentSchema: [VALUES_ARGUMENT],
+    example: {
+      setup: `fruits = ["apple", "banana"]`,
+      call: `fruits.extend(["kiwi", "grape"])`,
+      result: `["apple", "banana", "kiwi", "grape"]`,
+    },
+    complexity: "Average O(k), where k is the number of added items",
+    advanced: [
+      "extend() walks an iterable and appends each value. It does not add the iterable as one nested item.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+      values: [pythonString("kiwi"), pythonString("grape")],
+    },
     commonMistakes: [
       "extend() is not the same as append(). append() would add the whole list as one item.",
     ],
@@ -174,6 +278,22 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "intermediate",
     argumentSchema: [INDEX_ARGUMENT, VALUE_ARGUMENT],
+    example: {
+      setup: `fruits = ["apple", "orange"]`,
+      call: `fruits.insert(1, "banana")`,
+      result: `["apple", "banana", "orange"]`,
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "Negative indices count from the end. An index past the end appends, and a very negative index inserts at the start.",
+      "Items at and after the insertion point shift right.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+      indexText: "1",
+      value: pythonString("kiwi"),
+    },
   },
   {
     id: "remove",
@@ -187,6 +307,21 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "beginner",
     argumentSchema: [VALUE_ARGUMENT],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: `fruits.remove("banana")`,
+      result: `["apple", "orange"]`,
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "remove() deletes only the first match and returns None.",
+      "A missing value raises ValueError.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+      value: pythonString("banana"),
+    },
     commonMistakes: [
       "remove() needs a matching value. Use pop() if you know the index instead.",
     ],
@@ -204,6 +339,21 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "item",
     difficulty: "beginner",
     argumentSchema: [OPTIONAL_INDEX_ARGUMENT],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: "fruits.pop()",
+      result: `"orange"`,
+    },
+    complexity: "Average O(1) at the end, O(n) otherwise",
+    advanced: [
+      "With no argument, pop() removes the last item.",
+      "Negative indices count from the end. An empty list or out-of-range index raises IndexError.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+      indexText: "",
+    },
     comparisonWith: ["remove"],
   },
   {
@@ -217,6 +367,19 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "beginner",
     argumentSchema: [],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: "fruits.clear()",
+      result: "[]",
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "clear() empties the existing list in place. Other names for the same list also see the empty result.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+    },
   },
   {
     id: "count",
@@ -229,6 +392,20 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "int",
     difficulty: "beginner",
     argumentSchema: [VALUE_ARGUMENT],
+    example: {
+      setup: `letters = ["A", "B", "A", "C", "A"]`,
+      call: `letters.count("A")`,
+      result: "3",
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "count() returns 0 when the value is missing. It does not raise an error.",
+    ],
+    tryIt: {
+      variableName: "letters",
+      list: DUPLICATES_LIST,
+      value: pythonString("A"),
+    },
     comparisonWith: ["index"],
   },
   {
@@ -243,6 +420,21 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "int",
     difficulty: "beginner",
     argumentSchema: [VALUE_ARGUMENT],
+    example: {
+      setup: `letters = ["A", "B", "A", "C", "A"]`,
+      call: `letters.index("A")`,
+      result: "0",
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "index() returns only the first match.",
+      "A missing value raises ValueError. Use count() if you only need to know whether it appears.",
+    ],
+    tryIt: {
+      variableName: "letters",
+      list: DUPLICATES_LIST,
+      value: pythonString("A"),
+    },
     commonMistakes: [
       "index() raises ValueError if the value is not in the list.",
     ],
@@ -259,6 +451,19 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "beginner",
     argumentSchema: [],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: "fruits.reverse()",
+      result: `["orange", "banana", "apple"]`,
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "reverse() changes the existing list and returns None. It does not create a new list.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+    },
   },
   {
     id: "sort",
@@ -272,6 +477,21 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "None",
     difficulty: "intermediate",
     argumentSchema: [REVERSE_ARGUMENT],
+    example: {
+      setup: "numbers = [8, 3, 12, 1]",
+      call: "numbers.sort()",
+      result: "[1, 3, 8, 12]",
+    },
+    complexity: "Average O(n log n)",
+    advanced: [
+      "sort() changes the existing list and returns None.",
+      "Python cannot sort mixed types such as numbers and strings together.",
+    ],
+    tryIt: {
+      variableName: "numbers",
+      list: NUMBERS_LIST,
+      reverse: false,
+    },
     commonMistakes: [
       "sort() changes the list and returns None. Use sorted() to keep the original.",
     ],
@@ -289,6 +509,20 @@ export const METHODS: readonly MethodDefinition[] = [
     returnType: "list",
     difficulty: "intermediate",
     argumentSchema: [],
+    example: {
+      setup: `fruits = ["apple", "banana", "orange"]`,
+      call: "copied = fruits.copy()",
+      result: `["apple", "banana", "orange"]`,
+    },
+    complexity: "Average O(n)",
+    advanced: [
+      "copy() is a shallow copy: the new list is separate, but nested objects would still be shared. This playground does not nest lists.",
+      "b = a does not copy. Both names then refer to the same list.",
+    ],
+    tryIt: {
+      variableName: "fruits",
+      list: FRUITS_LIST,
+    },
     commonMistakes: [
       "Assigning another_name = items does not copy the list. Both names would refer to the same list.",
     ],

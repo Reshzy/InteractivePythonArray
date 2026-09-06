@@ -59,6 +59,7 @@ type PlaygroundError = {
   type: "ValueError" | "IndexError" | "TypeError"
   message: string
   friendlyMessage: string
+  guidance?: string
 }
 ```
 

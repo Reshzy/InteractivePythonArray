@@ -1,4 +1,4 @@
-import { getMethod } from "@/data/methods";
+import { getMethod, type MethodTryIt } from "@/data/methods";
 import { typeError } from "@/lib/python/errors";
 import { integerIndexError } from "@/lib/python/validation";
 import { formatPythonList, formatPythonValue } from "@/lib/python/format";
@@ -143,6 +143,31 @@ export function coerceDraftType(
   return createValueDraft("string", draft.text);
 }
 
+export function argumentsFromTryIt(
+  method: MethodId,
+  tryIt: MethodTryIt,
+): OperationArguments {
+  const next = createDefaultArguments();
+
+  if (tryIt.value) {
+    next.value = valueToDraft(tryIt.value);
+  }
+
+  if (tryIt.values) {
+    next.values = tryIt.values.map(valueToDraft);
+  }
+
+  if (tryIt.indexText !== undefined) {
+    next.indexText = tryIt.indexText;
+  }
+
+  if (tryIt.reverse !== undefined) {
+    next.reverse = tryIt.reverse;
+  }
+
+  return argumentsForMethod(method, next);
+}
+
 export function argumentsForMethod(
   method: MethodId,
   previous: OperationArguments,
@@ -218,6 +243,7 @@ function invalidNumberError(): PlaygroundError {
   return typeError(
     "could not convert string to float",
     "That value is not a valid number.",
+    "Use digits, such as 3 or 3.14.",
   );
 }
 

@@ -42,6 +42,7 @@ export type PlaygroundError = {
   type: PlaygroundErrorType;
   message: string;
   friendlyMessage: string;
+  guidance?: string;
 };
 
 export type AnimationInstruction =

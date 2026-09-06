@@ -267,7 +267,8 @@ function indexOperation(
     input: request.list,
     error: valueError(
       `${formattedValue} is not in list`,
-      "Python could not find that value in the list.",
+      `${formattedValue} is not in the list.`,
+      `Try adding ${formattedValue} first or choose a value already present.`,
     ),
     code,
     animation: {
@@ -344,6 +345,7 @@ function popOperation(
       error: indexError(
         "pop from empty list",
         "Python could not pop from an empty list.",
+        "Try append() to add an item first.",
       ),
       code,
       animation: { type: "none" },
@@ -356,11 +358,18 @@ function popOperation(
   );
 
   if (!access.ok) {
+    const length = request.list.length;
+    const rangeHint =
+      length === 1
+        ? "Your list has 1 item, so the only valid positive index is 0."
+        : `Your list has ${length} items, so valid positive indices are 0 through ${length - 1}.`;
+
     return failure({
       input: request.list,
       error: indexError(
         "pop index out of range",
-        "That index is outside the list, so Python could not pop an item.",
+        "pop index out of range.",
+        rangeHint,
       ),
       code,
       animation: { type: "none" },
@@ -426,7 +435,8 @@ function removeOperation(
     input: request.list,
     error: valueError(
       "list.remove(x): x not in list",
-      "Python could not remove that value because it is not in the list.",
+      `${formattedValue} is not in the list.`,
+      `Try adding ${formattedValue} first or choose a value already present.`,
     ),
     code,
     animation: {

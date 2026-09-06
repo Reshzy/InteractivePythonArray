@@ -1,4 +1,4 @@
-import { COMPARISON_PREVIEWS } from "@/data/comparisons";
+import { ComparisonLessons } from "@/components/comparisons/ComparisonLessons";
 
 export function ComparisonsPreview() {
   return (
@@ -15,26 +15,12 @@ export function ComparisonsPreview() {
           Comparisons
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          Nearby methods can look similar and behave very differently. These
-          pairings will become interactive later.
+          Nearby operations can look similar and behave very differently. Each
+          pairing shows the difference, then lets you try it in the playground.
         </p>
       </div>
 
-      <ul className="grid gap-3 md:grid-cols-2">
-        {COMPARISON_PREVIEWS.map((comparison) => (
-          <li
-            key={comparison.id}
-            className="flex flex-col gap-2 rounded-xl border border-dashed border-border bg-card/70 px-4 py-4"
-          >
-            <p className="font-mono text-sm">
-              {comparison.left}{" "}
-              <span className="text-muted-foreground">vs</span>{" "}
-              {comparison.right}
-            </p>
-            <p className="text-sm text-muted-foreground">{comparison.summary}</p>
-          </li>
-        ))}
-      </ul>
+      <ComparisonLessons />
     </section>
   );
 }

@@ -210,6 +210,31 @@ describe("playground store", () => {
     expect(store.getState().list).toHaveLength(5);
   });
 
+  it("tryMethod loads an example without running the operation", () => {
+    const store = createPlaygroundStore();
+    store.getState().executeOperation();
+    expect(store.getState().list).toHaveLength(4);
+
+    store.getState().tryMethod("append");
+
+    const state = store.getState();
+    expect(state.selectedMethod).toBe("append");
+    expect(state.variableName).toBe("fruits");
+    expect(state.list.map((item) => item.value)).toEqual([
+      pythonString("apple"),
+      pythonString("banana"),
+      pythonString("orange"),
+    ]);
+    expect(state.arguments.value).toEqual({
+      type: "string",
+      text: "mango",
+      booleanValue: true,
+    });
+    expect(state.lastResult).toBeNull();
+    expect(state.isAnimating).toBe(false);
+    expect(state.history).toHaveLength(1);
+  });
+
   it("allows undo during a mutation animation without replaying the method", () => {
     const store = createPlaygroundStore();
     const originalIds = ids(store);

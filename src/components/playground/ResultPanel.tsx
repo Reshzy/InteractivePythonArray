@@ -66,6 +66,11 @@ export function ResultPanel() {
           <p className="text-sm text-muted-foreground">
             {lastResult.error.friendlyMessage}
           </p>
+          {lastResult.error.guidance ? (
+            <p className="text-sm text-muted-foreground">
+              {lastResult.error.guidance}
+            </p>
+          ) : null}
           <p className="font-mono text-xs text-muted-foreground">
             {lastResult.error.message}
           </p>

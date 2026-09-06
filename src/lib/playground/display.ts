@@ -57,7 +57,8 @@ export function buildResultAnnouncement(
   listLength: number,
 ): string {
   if (result.error) {
-    return `${result.error.type}. ${result.error.friendlyMessage}`;
+    const guidance = result.error.guidance ? ` ${result.error.guidance}` : "";
+    return `${result.error.type}. ${result.error.friendlyMessage}${guidance}`;
   }
 
   const countLabel = listLength === 1 ? "1 item" : `${listLength} items`;

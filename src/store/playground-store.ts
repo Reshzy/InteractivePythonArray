@@ -7,7 +7,7 @@ import {
   isAnimationSpeed,
   type AnimationSpeed,
 } from "@/data/playground-demo";
-import { isMethodId } from "@/data/methods";
+import { getMethod, isMethodId, type MethodTryIt } from "@/data/methods";
 import {
   createPresetList,
   DEFAULT_PRESET_ID,
@@ -17,6 +17,7 @@ import {
 } from "@/data/presets";
 import {
   argumentsForMethod,
+  argumentsFromTryIt,
   buildOperationRequest,
   cloneArguments,
   createDefaultArguments,
@@ -31,6 +32,7 @@ import { prefersReducedMotion } from "@/lib/animations/reduced-motion";
 import {
   cloneList,
   clonePythonValue,
+  createList,
   createListItem,
   createListItemId,
   executeOperation,
@@ -102,6 +104,7 @@ export type PlaygroundActions = {
   redo: () => void;
   reset: () => void;
   loadPreset: (id: PresetId) => void;
+  tryMethod: (method: MethodId, snapshot?: MethodTryIt) => void;
   setAnimationSpeed: (animationSpeed: AnimationSpeed) => void;
   completePlayback: () => void;
   revealResult: () => void;
@@ -444,6 +447,25 @@ export function createPlaygroundApi(
         historyIndex: -1,
         arguments: argumentsForMethod(state.selectedMethod, state.arguments),
         ...startPlaybackSession(state, "preset", true, state.list),
+      });
+    },
+
+    tryMethod: (method, snapshot) => {
+      const state = get();
+      const tryIt = snapshot ?? getMethod(method).tryIt;
+
+      set({
+        selectedMethod: method,
+        variableName: tryIt.variableName,
+        list: createList(tryIt.list),
+        arguments: argumentsFromTryIt(method, tryIt),
+        lastResult: null,
+        selectedPreset: null,
+        isAnimating: false,
+        playbackKind: "idle",
+        resultRevealed: true,
+        playbackFrom: null,
+        playbackSessionId: state.playbackSessionId + 1,
       });
     },
 
