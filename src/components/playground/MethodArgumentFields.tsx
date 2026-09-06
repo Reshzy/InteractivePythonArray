@@ -51,7 +51,7 @@ export function MethodArgumentFields({
               key={argument.name}
               id="operation-value"
               label={argument.label}
-              description={strip ? undefined : argument.description}
+              description={argument.description}
               value={operationArguments.value}
               onChange={setValueDraft}
               compact={strip}
@@ -72,9 +72,11 @@ export function MethodArgumentFields({
                 onChange={(event) => setIndexText(event.target.value)}
                 className="min-h-11 font-mono"
               />
-              {strip ? null : (
-                <FieldDescription>{argument.description}</FieldDescription>
-              )}
+              {argument.description ? (
+                <FieldDescription className={cn(strip && "sr-only")}>
+                  {argument.description}
+                </FieldDescription>
+              ) : null}
             </Field>
           );
         }
@@ -103,9 +105,11 @@ export function MethodArgumentFields({
                   Descending
                 </ToggleGroupItem>
               </ToggleGroup>
-              {strip ? null : (
-                <FieldDescription>{argument.description}</FieldDescription>
-              )}
+              {argument.description ? (
+                <FieldDescription className={cn(strip && "sr-only")}>
+                  {argument.description}
+                </FieldDescription>
+              ) : null}
             </Field>
           );
         }
@@ -148,9 +152,11 @@ export function MethodArgumentFields({
                 Add item
               </Button>
             </div>
-            {strip ? null : (
-              <FieldDescription>{argument.description}</FieldDescription>
-            )}
+            {argument.description ? (
+              <FieldDescription className={cn(strip && "sr-only")}>
+                {argument.description}
+              </FieldDescription>
+            ) : null}
           </Field>
         );
       })}

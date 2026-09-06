@@ -9,7 +9,12 @@ import {
 } from "@/lib/playground/display";
 import { usePlaygroundStore } from "@/store/playground-store";
 
-export function ResultPanel() {
+export function ResultPanel({
+  headingLevel = "h3",
+}: {
+  headingLevel?: "h2" | "h3";
+}) {
+  const HeadingTag = headingLevel;
   const selectedMethod = usePlaygroundStore((state) => state.selectedMethod);
   const lastResult = usePlaygroundStore((state) => state.lastResult);
   const list = usePlaygroundStore((state) => state.list);
@@ -48,9 +53,9 @@ export function ResultPanel() {
       className="flex flex-col gap-2"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <h3 id="result-panel-heading" className="text-sm font-medium">
+        <HeadingTag id="result-panel-heading" className="text-sm font-medium">
           Result
-        </h3>
+        </HeadingTag>
         {stepping ? (
           <Badge variant="outline">Step</Badge>
         ) : showResult && lastResult?.error ? (

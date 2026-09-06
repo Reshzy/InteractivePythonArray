@@ -15,7 +15,7 @@ export function ComparisonLessons() {
         <li
           key={comparison.id}
           id={`comparison-${comparison.id}`}
-          className="scroll-mt-20 flex flex-col gap-4 rounded-xl border border-border bg-card px-4 py-5"
+          className="scroll-mt-22 flex flex-col gap-4 rounded-xl border border-border bg-card px-4 py-5"
         >
           <div className="flex flex-col gap-1">
             <h3 className="font-mono text-sm font-medium">
@@ -46,7 +46,7 @@ export function ComparisonLessons() {
 
 function ComparisonColumn({ side }: { side: ComparisonSide }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/30 px-3 py-3">
+    <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="font-mono text-sm font-medium">{side.title}</h4>
         <p className="text-xs text-muted-foreground">
@@ -80,17 +80,17 @@ function ComparisonColumn({ side }: { side: ComparisonSide }) {
 
 function CopyAssignmentDiagram() {
   return (
-    <div className="grid gap-3 md:grid-cols-2">
-      <div className="rounded-lg border border-border bg-muted/30 px-3 py-3">
-        <p className="mb-2 font-mono text-xs font-medium">copy()</p>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="flex flex-col gap-2">
+        <p className="font-mono text-xs font-medium">copy()</p>
         <p className="sr-only">{buildXRayCopyDescription("a", "b")}</p>
         <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
           <p>a ───&gt; list A</p>
           <p>b ───&gt; list B</p>
         </div>
       </div>
-      <div className="rounded-lg border border-border bg-muted/30 px-3 py-3">
-        <p className="mb-2 font-mono text-xs font-medium">assignment</p>
+      <div className="flex flex-col gap-2">
+        <p className="font-mono text-xs font-medium">assignment</p>
         <p className="sr-only">{buildXRayAssignmentDescription("a", "b")}</p>
         <pre className="font-mono text-xs text-muted-foreground">{`a ─┐
    ├──> same list

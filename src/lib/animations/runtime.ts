@@ -64,14 +64,18 @@ export function isSimplified(mode: AnimationMode): boolean {
   return mode === "simplified" || mode === "reduced";
 }
 
+export function shouldFlipLayout(mode: AnimationMode): boolean {
+  return !isReduced(mode);
+}
+
 export function emphasizeResult(runtime: PlaybackRuntime): void {
   const el = runtime.getResultReturns();
-  if (!el) {
+  if (!el || isReduced(runtime.mode)) {
     return;
   }
 
   runtime.timeline.to(el, {
-    scale: runtime.mode === "reduced" ? 1.02 : 1.05,
+    scale: 1.05,
     duration: runtime.duration(0.16),
     yoyo: true,
     repeat: 1,

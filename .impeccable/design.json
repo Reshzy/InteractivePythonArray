@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-06T12:00:00.000Z",
+  "title": "Design System: Python Lists Playground",
+  "extensions": {
+    "colorMeta": {
+      "cream": {
+        "role": "neutral",
+        "displayName": "Warm Cream",
+        "canonical": "#fffaf6",
+        "tonalRamp": ["#2a241c", "#4a4136", "#6e6458", "#94897c", "#b8aea2", "#d6cdc4", "#ebe4dc", "#fffaf6"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#171717",
+        "tonalRamp": ["#171717", "#2e2e2e", "#4a4a4a", "#5c5c5c", "#8a8a8a", "#b8b8b8", "#e5e5e5", "#fafafa"]
+      },
+      "signal": {
+        "role": "primary",
+        "displayName": "Signal Orange",
+        "canonical": "#ff6b00",
+        "tonalRamp": ["#4a1f00", "#7a3300", "#b34a00", "#e55c00", "#ff6b00", "#ff8a33", "#ffc08a", "#fff1e6"]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#1c1a17", "#2e2a24", "#5c564c", "#8a8276", "#c4b8ac", "#e4d8cc", "#f4efe9", "#ffffff"]
+      },
+      "quiet": {
+        "role": "neutral",
+        "displayName": "Quiet Ink",
+        "canonical": "#5c5c5c",
+        "tonalRamp": ["#171717", "#2e2e2e", "#454545", "#5c5c5c", "#7a7a7a", "#a3a3a3", "#cfcfcf", "#f4efe9"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e4d8cc",
+        "tonalRamp": ["#2e2a24", "#4a433a", "#6e6458", "#94897c", "#b8aea2", "#d6cdc4", "#e4d8cc", "#f4efe9"]
+      },
+      "rust": {
+        "role": "primary",
+        "displayName": "Rust",
+        "canonical": "#c2410c",
+        "tonalRamp": ["#431407", "#7c2d12", "#9a3412", "#c2410c", "#ea580c", "#f87171", "#fdba74", "#fff7ed"]
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night",
+        "canonical": "#12110f",
+        "tonalRamp": ["#12110f", "#1c1a17", "#2a261f", "#2e2a24", "#5c564c", "#c4b8ac", "#f5f2ee", "#fffaf6"]
+      },
+      "ember": {
+        "role": "primary",
+        "displayName": "Ember",
+        "canonical": "#ff8a33",
+        "tonalRamp": ["#4a1f00", "#7a3300", "#b34a00", "#e55c00", "#ff6b00", "#ff8a33", "#ffc08a", "#fff1e6"]
+      }
+    },
+    "typographyMeta": {
+      "title": { "displayName": "Title", "purpose": "Section names: Methods, Comparisons, Challenges." },
+      "body": { "displayName": "Body", "purpose": "Teaching copy and UI text." },
+      "label": { "displayName": "Label", "purpose": "Visible field names on the instrument strip." },
+      "mono": { "displayName": "Mono", "purpose": "Python code, values, method names, captions." }
+    },
+    "shadows": [
+      {
+        "name": "cell-rest",
+        "value": "0 10px 24px -18px color-mix(in oklab, var(--foreground) 45%, transparent)",
+        "purpose": "Idle list cells."
+      },
+      {
+        "name": "cell-changed",
+        "value": "2px 6px 16px -6px color-mix(in oklab, var(--primary) 45%, transparent)",
+        "purpose": "Inserted, matched, moved, or returned cells."
+      },
+      {
+        "name": "run",
+        "value": "0 8px 20px -8px color-mix(in oklab, var(--primary) 70%, transparent)",
+        "purpose": "Primary Run control only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "flip-full",
+        "value": "0.55s power3.inOut",
+        "purpose": "Cell travel when prefers-reduced-motion is off."
+      },
+      {
+        "name": "highlight-reduced",
+        "value": "0.12s fade/highlight, no Flip, no shake",
+        "purpose": "Reduced-motion teaching: state changes without travel."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Run",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The stage primary. Orange fill, ink type, 48px tall.",
+      "html": "<button class=\"ds-btn-run\" type=\"button\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><polygon points=\"6 3 20 12 6 21 6 3\"/></svg>Run</button>",
+      "css": ".ds-btn-run { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 48px; min-width: 112px; padding: 0 24px; border: 0; border-radius: 10px; background: var(--primary, #ff6b00); color: var(--primary-foreground, #171717); font: 500 16px Geist, ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 20px -8px color-mix(in oklab, var(--primary, #ff6b00) 70%, transparent); cursor: pointer; } .ds-btn-run:hover { background: color-mix(in oklab, var(--primary, #ff6b00) 80%, transparent); } .ds-btn-run:focus-visible { outline: 2px solid var(--ring, #171717); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary playground actions: Undo, Share, Try it.",
+      "html": "<button class=\"ds-btn-outline\" type=\"button\">Undo</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; border: 1px solid var(--border, #e4d8cc); border-radius: 10px; background: var(--background, #fffaf6); color: var(--foreground, #171717); font: 500 14px Geist, ui-sans-serif, system-ui, sans-serif; cursor: pointer; } .ds-btn-outline:hover { background: var(--muted, #f4efe9); } .ds-btn-outline:focus-visible { outline: 2px solid var(--ring, #171717); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "44px mono-capable field with a hairline border.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Value</span><input class=\"ds-input\" value=\"mango\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; } .ds-field-label { font: 500 14px Geist, ui-sans-serif, system-ui, sans-serif; color: var(--foreground, #171717); } .ds-input { min-height: 44px; padding: 8px 10px; border: 1px solid var(--input, #e4d8cc); border-radius: 10px; background: transparent; color: var(--foreground, #171717); font: 400 16px Geist Mono, ui-monospace, monospace; } .ds-input:focus-visible { outline: 2px solid var(--ring, #171717); outline-offset: 2px; border-color: var(--ring, #171717); }"
+    },
+    {
+      "name": "Section nav",
+      "kind": "nav",
+      "refersTo": "button-ghost",
+      "description": "Sticky chrome links in Quiet Ink.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Page sections\"><a class=\"ds-nav-link\" href=\"#playground\">Playground</a><a class=\"ds-nav-link\" href=\"#methods\">Methods</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 4px; } .ds-nav-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--muted-foreground, #5c5c5c); font: 400 14px Geist, ui-sans-serif, system-ui, sans-serif; text-decoration: none; } .ds-nav-link:hover { color: var(--foreground, #171717); } .ds-nav-link:focus-visible { outline: 2px solid var(--ring, #171717); outline-offset: 2px; }"
+    },
+    {
+      "name": "Status badge",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Ran / Preview / Built-in chips. Outline, not orange wash.",
+      "html": "<span class=\"ds-badge\">Ran</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border: 1px solid var(--border, #e4d8cc); border-radius: 999px; background: var(--background, #fffaf6); color: var(--foreground, #171717); font: 500 12px Geist, ui-sans-serif, system-ui, sans-serif; }"
+    },
+    {
+      "name": "Lesson shell",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "One bordered paper shell per method or comparison. No nested cards.",
+      "html": "<article class=\"ds-card\"><h3 class=\"ds-card-title\">append vs extend</h3><p class=\"ds-card-body\">append adds one item. extend adds many.</p></article>",
+      "css": ".ds-card { border: 1px solid var(--border, #e4d8cc); border-radius: 14px; background: var(--card, #ffffff); padding: 20px 16px; color: var(--card-foreground, #171717); } .ds-card-title { margin: 0; font: 500 14px Geist Mono, ui-monospace, monospace; } .ds-card-body { margin: 8px 0 0; font: 400 14px/1.625 Geist, ui-sans-serif, system-ui, sans-serif; color: var(--muted-foreground, #5c5c5c); }"
+    },
+    {
+      "name": "List cell",
+      "kind": "custom",
+      "refersTo": "list-cell",
+      "description": "Theater tile: index, mono value, offset-blur shadow.",
+      "html": "<div class=\"ds-cell\"><span class=\"ds-cell-index\">2</span><div class=\"ds-cell-body\">\"mango\"</div></div>",
+      "css": ".ds-cell { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 160px; } .ds-cell-index { font: 400 12px Geist Mono, ui-monospace, monospace; color: var(--muted-foreground, #5c5c5c); } .ds-cell-body { display: flex; align-items: center; justify-content: center; min-height: 112px; width: 100%; padding: 20px; border: 1px solid var(--border, #e4d8cc); border-radius: 14px; background: var(--card, #ffffff); font: 400 18px Geist Mono, ui-monospace, monospace; box-shadow: 0 10px 24px -18px color-mix(in oklab, var(--foreground, #171717) 45%, transparent); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The List Stage",
+    "overview": "The product is a teaching theater for beginner Python lists. The first viewport is the list itself: large cells, generated code as a caption, and a single orange Run control. Chrome stays quiet. Personality lives in the footer signature, never in the hero.\n\nThe world is warm paper and near-black ink, developer-tool precise without looking like a classroom kit. Motion explains mutation. When the visitor asks for less motion, the stage still changes state — highlight, fade, error outline — but cells do not travel and the stage does not shake.",
+    "keyCharacteristics": [
+      "Cream paper, ink type, orange only on Run, selection, and changed cells",
+      "Geist Sans for UI; Geist Mono for code, values, and method names",
+      "One surface per group; never a card inside a card",
+      "44px product controls; theater-scale list cells",
+      "Teaching motion with a reduced path that keeps meaning"
+    ],
+    "rules": [
+      {
+        "name": "The Scarce Orange Rule",
+        "body": "Orange is not a brand wash. If a screen has orange on more than Run, the current selection, and cells that just changed, it is too loud.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono-Is-Python Rule",
+        "body": "Geist Mono is for lists, code, and method names. It is not a costume for “technical” body copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Offset-Blur Rule",
+        "body": "Shadows carry offset and blur. A colored halo with no offset is decoration and does not belong here.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do land the visitor inside the list stage. The subtitle Learn Python lists by playing with them. lives in chrome, not a marketing hero.",
+      "Do keep orange scarce: Run, selection, changed cells.",
+      "Do pair every operation with code, list state, explanation, and return or error.",
+      "Do use 44px targets on product controls and keep reduced motion as highlight/fade/outline."
+    ],
+    "donts": [
+      "Don't nest cards. One bordered shell per lesson or method.",
+      "Don't put a kicker or eyebrow above a heading.",
+      "Don't use orange as body text (signal on cream fails contrast).",
+      "Don't put the creator signature anywhere but the small footer line: Made by kuya Rodge <3.",
+      "Don't invent testimonials, accounts, or a backend. This is a local playground."
+    ]
+  }
+}

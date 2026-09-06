@@ -5,7 +5,7 @@ export function ComparisonsPreview() {
     <section
       id="comparisons"
       aria-labelledby="comparisons-heading"
-      className="scroll-mt-20 mx-auto w-full max-w-6xl px-4 py-12"
+      className="scroll-mt-22 mx-auto w-full max-w-6xl px-4 py-12"
     >
       <div className="mb-6 max-w-2xl">
         <h2

@@ -1,7 +1,24 @@
-import { ChallengesSection } from "@/components/challenges/ChallengesSection";
-import { ComparisonsPreview } from "@/components/comparisons/ComparisonsPreview";
-import { MethodsPreview } from "@/components/methods/MethodsPreview";
+import dynamic from "next/dynamic";
+
 import { Playground } from "@/components/playground/Playground";
+
+const MethodsPreview = dynamic(() =>
+  import("@/components/methods/MethodsPreview").then((mod) => ({
+    default: mod.MethodsPreview,
+  })),
+);
+
+const ComparisonsPreview = dynamic(() =>
+  import("@/components/comparisons/ComparisonsPreview").then((mod) => ({
+    default: mod.ComparisonsPreview,
+  })),
+);
+
+const ChallengesSection = dynamic(() =>
+  import("@/components/challenges/ChallengesSection").then((mod) => ({
+    default: mod.ChallengesSection,
+  })),
+);
 
 export default function Home() {
   return (

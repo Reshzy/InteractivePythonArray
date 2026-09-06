@@ -147,7 +147,12 @@ export function ValueField({
         ) : null}
       </div>
       {description ? (
-        <FieldDescription id={`${id}-description`}>{description}</FieldDescription>
+        <FieldDescription
+          id={`${id}-description`}
+          className={cn(compact && "sr-only")}
+        >
+          {description}
+        </FieldDescription>
       ) : null}
     </Field>
   );

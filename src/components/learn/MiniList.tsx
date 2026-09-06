@@ -14,6 +14,7 @@ export function MiniList({
 }) {
   return (
     <div
+      role="group"
       className="flex flex-wrap items-center gap-1.5"
       aria-label={label}
     >

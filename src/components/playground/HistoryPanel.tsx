@@ -3,7 +3,12 @@
 import { usePlaygroundStore } from "@/store/playground-store";
 import { cn } from "@/lib/utils";
 
-export function HistoryPanel() {
+export function HistoryPanel({
+  headingLevel = "h3",
+}: {
+  headingLevel?: "h2" | "h3";
+}) {
+  const HeadingTag = headingLevel;
   const history = usePlaygroundStore((state) => state.history);
   const historyIndex = usePlaygroundStore((state) => state.historyIndex);
 
@@ -12,9 +17,9 @@ export function HistoryPanel() {
       aria-labelledby="history-heading"
       className="flex flex-col gap-3"
     >
-      <h3 id="history-heading" className="text-sm font-medium">
+      <HeadingTag id="history-heading" className="text-sm font-medium">
         History
-      </h3>
+      </HeadingTag>
 
       {history.length === 0 ? (
         <p className="text-sm text-muted-foreground">
@@ -29,7 +34,7 @@ export function HistoryPanel() {
             return (
               <li
                 key={entry.id}
-                aria-current={isCurrent ? "step" : undefined}
+                aria-current={isCurrent ? "true" : undefined}
                 className={cn(
                   "min-w-0 rounded-md px-2 py-1.5 break-all",
                   isCurrent && "bg-primary/10 text-foreground",

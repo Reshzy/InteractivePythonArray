@@ -15,7 +15,7 @@ export function playError(runtime: PlaybackRuntime): void {
     runtime.setVisualizerError(true);
     runtime.revealResult();
     const visualizer = runtime.getVisualizer();
-    if (!visualizer) {
+    if (!visualizer || isReduced(runtime.mode)) {
       return;
     }
 
@@ -23,7 +23,7 @@ export function playError(runtime: PlaybackRuntime): void {
       visualizer,
       { x: 0 },
       {
-        x: isReduced(runtime.mode) ? 4 : 10,
+        x: 10,
         duration: runtime.duration(0.05),
         yoyo: true,
         repeat: 7,
@@ -31,10 +31,15 @@ export function playError(runtime: PlaybackRuntime): void {
       },
     );
   });
-  addDelay(runtime.timeline, runtime.duration(BASE_DURATIONS.shake));
+  addDelay(
+    runtime.timeline,
+    runtime.duration(
+      isReduced(runtime.mode) ? BASE_DURATIONS.pulse : BASE_DURATIONS.shake,
+    ),
+  );
   runtime.timeline.add(() => {
     const visualizer = runtime.getVisualizer();
-    if (visualizer) {
+    if (visualizer && !isReduced(runtime.mode)) {
       gsap.set(visualizer, { x: 0 });
     }
     runtime.setVisualizerError(false);

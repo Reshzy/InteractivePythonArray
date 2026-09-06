@@ -136,6 +136,8 @@
 
   html {
     @apply font-sans;
+    scroll-padding-top: 5.5rem;
+    color-scheme: light dark;
   }
 
   @media (prefers-reduced-motion: no-preference) {

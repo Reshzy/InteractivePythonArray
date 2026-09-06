@@ -4,6 +4,10 @@ import { PlayIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  Field,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
   Select,
   SelectContent,
   SelectGroup,
@@ -43,51 +47,57 @@ export function InstrumentStrip() {
       className="flex flex-col gap-3 md:flex-row md:flex-wrap md:items-end md:justify-between"
     >
       <div className="flex min-w-0 flex-1 flex-col gap-3 md:flex-row md:flex-wrap md:items-end">
-        <Select
-          items={PRESET_SELECT_ITEMS}
-          value={selectedPreset}
-          onValueChange={(value) => {
-            if (isPresetId(value)) {
-              loadPreset(value);
-            }
-          }}
-        >
-          <SelectTrigger aria-label="List preset" className="min-h-11 min-w-32">
-            <SelectValue placeholder="Preset" />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            <SelectGroup>
-              {PRESET_SELECT_ITEMS.map((preset) => (
-                <SelectItem key={preset.value} value={preset.value}>
-                  {preset.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Field className="gap-1">
+          <FieldLabel htmlFor="list-preset">Preset</FieldLabel>
+          <Select
+            items={PRESET_SELECT_ITEMS}
+            value={selectedPreset}
+            onValueChange={(value) => {
+              if (isPresetId(value)) {
+                loadPreset(value);
+              }
+            }}
+          >
+            <SelectTrigger id="list-preset" className="min-h-11 min-w-32">
+              <SelectValue placeholder="Preset" />
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              <SelectGroup>
+                {PRESET_SELECT_ITEMS.map((preset) => (
+                  <SelectItem key={preset.value} value={preset.value}>
+                    {preset.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
 
-        <Select
-          items={METHOD_ITEMS}
-          value={selectedMethod}
-          onValueChange={(value) => {
-            if (isMethodId(value)) {
-              setSelectedMethod(value);
-            }
-          }}
-        >
-          <SelectTrigger aria-label="List method" className="min-h-11 min-w-36 font-mono">
-            <SelectValue placeholder="Method" />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            <SelectGroup>
-              {METHOD_ITEMS.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Field className="gap-1">
+          <FieldLabel htmlFor="list-method">Method</FieldLabel>
+          <Select
+            items={METHOD_ITEMS}
+            value={selectedMethod}
+            onValueChange={(value) => {
+              if (isMethodId(value)) {
+                setSelectedMethod(value);
+              }
+            }}
+          >
+            <SelectTrigger id="list-method" className="min-h-11 min-w-36 font-mono">
+              <SelectValue placeholder="Method" />
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              <SelectGroup>
+                {METHOD_ITEMS.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </Field>
 
         <MethodArgumentFields layout="strip" />
       </div>

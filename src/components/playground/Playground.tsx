@@ -33,6 +33,8 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
   const HeadingTag = headingLevel;
   const playgroundRef = useRef<HTMLElement>(null);
   const playback = useListPlayback(playgroundRef);
+  const hasHydrated = usePlaygroundStore((state) => state.hasHydrated);
+  const nestedHeading = headingLevel === "h1" ? "h2" : "h3";
 
   useEffect(() => {
     const parsed = parseShareSearchParams(
@@ -101,33 +103,46 @@ export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2"
       id="playground"
       tabIndex={-1}
       aria-labelledby="playground-heading"
-      className="scroll-mt-16 flex flex-col px-4 pt-4 pb-6 outline-none"
+      className="scroll-mt-22 flex flex-col px-4 pt-4 pb-6 outline-none"
+      aria-busy={!hasHydrated}
     >
       <div
         data-playground-shell
         className="mx-auto flex w-full max-w-6xl flex-col gap-6"
       >
         <HeadingTag id="playground-heading" className="sr-only">
-          Python List Playground
+          Python Lists Playground
         </HeadingTag>
-        <ListVisualizer
-          displayList={playback.displayList}
-          incoming={playback.incoming}
-          secondary={playback.secondary}
-          secondaryLabels={playback.secondaryLabels}
-          scanCount={playback.scanCount}
-          disclaimer={playback.disclaimer}
-          visualizerError={playback.visualizerError}
-          interactive={playback.interactive}
-          cellStates={playback.cellStates}
-        />
+        {!hasHydrated ? (
+          <>
+            <div
+              className="flex min-h-[46vh] flex-col justify-center py-4 md:min-h-[52vh]"
+              aria-hidden="true"
+            />
+            <p className="sr-only">Loading playground</p>
+          </>
+        ) : (
+          <>
+            <ListVisualizer
+              displayList={playback.displayList}
+              incoming={playback.incoming}
+              secondary={playback.secondary}
+              secondaryLabels={playback.secondaryLabels}
+              scanCount={playback.scanCount}
+              disclaimer={playback.disclaimer}
+              visualizerError={playback.visualizerError}
+              interactive={playback.interactive}
+              cellStates={playback.cellStates}
+            />
 
-        <InstrumentStrip />
-        <OperationCaption />
-        <StepControls />
-        <PlaygroundToolbar />
-        <ResultPanel />
-        <HistoryPanel />
+            <InstrumentStrip />
+            <OperationCaption />
+            <StepControls />
+            <PlaygroundToolbar />
+            <ResultPanel headingLevel={nestedHeading} />
+            <HistoryPanel headingLevel={nestedHeading} />
+          </>
+        )}
       </div>
     </section>
   );

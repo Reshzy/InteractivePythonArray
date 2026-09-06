@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { Footer } from "@/components/layout/Footer";
@@ -42,6 +42,15 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
+};
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fffaf6" },
+    { media: "(prefers-color-scheme: dark)", color: "#12110f" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

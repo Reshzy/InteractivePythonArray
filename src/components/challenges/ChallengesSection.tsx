@@ -137,7 +137,7 @@ export function ChallengesSection() {
     <section
       id="challenges"
       aria-labelledby="challenges-heading"
-      className="scroll-mt-20 mx-auto w-full max-w-6xl px-4 py-12 pb-16"
+      className="scroll-mt-22 mx-auto w-full max-w-6xl px-4 py-12 pb-16"
     >
       <div className="mb-6 flex max-w-2xl flex-col gap-2">
         <h2 id="challenges-heading" className="text-[1.65rem] font-medium tracking-tight">
@@ -157,12 +157,12 @@ export function ChallengesSection() {
       <article className="flex flex-col gap-5 rounded-xl border border-border bg-card px-4 py-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex flex-col gap-1">
-            <p className="text-xs tracking-wider text-muted-foreground uppercase">
-              Challenge {index + 1} of {CHALLENGES.length}
-            </p>
             <h3 className="text-base font-medium tracking-tight">
               {challenge.title}
             </h3>
+            <p className="text-sm text-muted-foreground">
+              Challenge {index + 1} of {CHALLENGES.length}
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {completed ? <Badge>Completed</Badge> : null}
@@ -176,10 +176,8 @@ export function ChallengesSection() {
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/30 px-3 py-3">
-            <ListSnapshot label="Start" values={challenge.initialList} />
-          </div>
-          <div className="flex flex-col gap-3 rounded-lg border border-border bg-muted/30 px-3 py-3">
+          <ListSnapshot label="Start" values={challenge.initialList} />
+          <div className="flex flex-col gap-3">
             {challenge.targetList ? (
               <ListSnapshot label="Goal" values={challenge.targetList} />
             ) : null}

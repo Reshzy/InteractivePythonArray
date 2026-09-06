@@ -15,7 +15,11 @@ import {
 import { startPlayback } from "@/lib/animations/play";
 import { routePlayback, type SecondaryLabels } from "@/lib/animations/playback";
 import { prefersReducedMotion, resolveAnimationMode } from "@/lib/animations/reduced-motion";
-import type { PlaybackRuntime, VisualCommit } from "@/lib/animations/runtime";
+import {
+  shouldFlipLayout,
+  type PlaybackRuntime,
+  type VisualCommit,
+} from "@/lib/animations/runtime";
 import { BASE_DURATIONS, scaleDuration } from "@/lib/animations/timing";
 import { cellVisualStateAt } from "@/lib/playground/steps";
 import { cloneList } from "@/lib/python";
@@ -99,7 +103,7 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
       speed,
     );
 
-    if (!pending.flip || !root) {
+    if (!pending.flip || !root || reduced) {
       pending.timeline.resume();
       return;
     }
@@ -195,7 +199,7 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
 
         const activeSessionId = usePlaygroundStore.getState().playbackSessionId;
         timeline.pause();
-        const shouldFlip = patch.flip === true;
+        const shouldFlip = patch.flip === true && shouldFlipLayout(mode);
         const flipTargets = shouldFlip
           ? queryAll(root, "[data-flip-id]")
           : [];

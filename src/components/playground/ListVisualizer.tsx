@@ -58,7 +58,7 @@ function CellRow({
   return (
     <ul
       data-track={track}
-      className="flex min-h-52 items-start justify-center gap-6 overflow-x-auto pb-2 md:min-h-56 md:gap-8"
+      className="flex min-h-52 items-start justify-center gap-6 overflow-x-auto overscroll-x-contain pb-3 md:min-h-56 md:gap-8"
     >
       {items.map((item, index) => (
         <li key={item.id}>
@@ -136,7 +136,7 @@ function XRayTrack({
   return (
     <div className="flex flex-col gap-2">
       <XRayPointer name={name} />
-      <div className="flex gap-3 overflow-x-auto">
+      <div className="flex gap-3 overflow-x-auto overscroll-x-contain pb-1">
         <div className="flex shrink-0 flex-col justify-center gap-8 pt-1">
           <p className="whitespace-nowrap text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
             Index
@@ -319,7 +319,7 @@ export function ListVisualizer({
           {displayList.length === 0 && incoming.length === 0 ? (
             <EmptyList />
           ) : (
-            <div className="flex items-start gap-5 overflow-x-auto">
+            <div className="flex items-start gap-5 overflow-x-auto overscroll-x-contain pb-1">
               {displayList.length === 0 ? (
                 <EmptyList />
               ) : (
