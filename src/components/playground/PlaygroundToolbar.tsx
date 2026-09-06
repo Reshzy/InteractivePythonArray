@@ -1,6 +1,9 @@
 "use client";
 
-import { Redo2Icon, RotateCcwIcon, Undo2Icon } from "lucide-react";
+import { Redo2Icon, RotateCcwIcon, Share2Icon, Undo2Icon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { getChallenge } from "@/data/challenges";
 import {
@@ -19,6 +23,7 @@ import {
   isAnimationSpeed,
 } from "@/data/playground-demo";
 import { PRESET_SELECT_ITEMS, isPresetId } from "@/data/presets";
+import { buildShareUrl } from "@/lib/playground/share";
 import {
   canRedo,
   canUndo,
@@ -40,12 +45,30 @@ export function PlaygroundToolbar() {
   const activeChallengeId = usePlaygroundStore(
     (state) => state.activeChallengeId,
   );
+  const xRayMode = usePlaygroundStore((state) => state.xRayMode);
+  const stepMode = usePlaygroundStore((state) => state.stepMode);
+  const setXRayMode = usePlaygroundStore((state) => state.setXRayMode);
+  const setStepMode = usePlaygroundStore((state) => state.setStepMode);
+  const [shareMessage, setShareMessage] = useState("");
 
   const undoEnabled = canUndo({ historyIndex });
   const redoEnabled = canRedo({ history, historyIndex });
   const activeChallenge = activeChallengeId
     ? getChallenge(activeChallengeId)
     : null;
+
+  async function handleShare() {
+    const state = usePlaygroundStore.getState();
+    const url = buildShareUrl(state, window.location.origin);
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Playground link copied.");
+      setShareMessage("Playground link copied.");
+    } catch {
+      toast.error("Could not copy the playground link.");
+      setShareMessage("Could not copy the playground link.");
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -57,8 +80,8 @@ export function PlaygroundToolbar() {
           Python List Playground
         </h2>
         {activeChallenge ? (
-          <a
-            href="#challenges"
+          <Link
+            href="/#challenges"
             className="inline-flex w-fit min-h-11 items-center gap-2 rounded-lg"
             aria-label={`Practice challenge: ${activeChallenge.title}. Back to challenges.`}
           >
@@ -66,8 +89,11 @@ export function PlaygroundToolbar() {
             <span className="truncate text-sm text-muted-foreground">
               {activeChallenge.title}
             </span>
-          </a>
+          </Link>
         ) : null}
+        <p className="sr-only" aria-live="polite">
+          {shareMessage}
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -96,6 +122,39 @@ export function PlaygroundToolbar() {
             </SelectGroup>
           </SelectContent>
         </Select>
+
+        <Toggle
+          variant="outline"
+          pressed={xRayMode}
+          onPressedChange={setXRayMode}
+          className="min-h-11 px-3"
+          aria-label="X-Ray mode"
+        >
+          X-Ray
+        </Toggle>
+
+        <Toggle
+          variant="outline"
+          pressed={stepMode}
+          onPressedChange={setStepMode}
+          className="min-h-11 px-3"
+          aria-label="Step mode"
+        >
+          Step
+        </Toggle>
+
+        <Button
+          type="button"
+          variant="outline"
+          className="min-h-11"
+          onClick={() => {
+            void handleShare();
+          }}
+          aria-label="Share playground"
+        >
+          <Share2Icon data-icon="inline-start" />
+          Share
+        </Button>
 
         <Button
           type="button"

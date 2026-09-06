@@ -17,6 +17,7 @@ import { routePlayback, type SecondaryLabels } from "@/lib/animations/playback";
 import { prefersReducedMotion, resolveAnimationMode } from "@/lib/animations/reduced-motion";
 import type { PlaybackRuntime, VisualCommit } from "@/lib/animations/runtime";
 import { BASE_DURATIONS, scaleDuration } from "@/lib/animations/timing";
+import { cellVisualStateAt } from "@/lib/playground/steps";
 import { cloneList } from "@/lib/python";
 import type { ListItem } from "@/lib/python/types";
 import { usePlaygroundStore } from "@/store/playground-store";
@@ -57,6 +58,9 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
   const isAnimating = usePlaygroundStore((state) => state.isAnimating);
   const sessionId = usePlaygroundStore((state) => state.playbackSessionId);
   const playbackFrom = usePlaygroundStore((state) => state.playbackFrom);
+  const playbackKind = usePlaygroundStore((state) => state.playbackKind);
+  const steps = usePlaygroundStore((state) => state.steps);
+  const stepIndex = usePlaygroundStore((state) => state.stepIndex);
 
   const [overlay, setOverlay] = useState<PlaybackVisual>(() =>
     createOverlay(sessionId),
@@ -72,9 +76,13 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
   const generationRef = useRef(0);
   const pendingLayout = useRef<PendingLayout | null>(null);
 
-  const displayList = isAnimating
-    ? (overlay.displayList ?? playbackFrom ?? list)
-    : list;
+  const currentStep = playbackKind === "step" ? steps[stepIndex] : undefined;
+
+  const displayList = currentStep
+    ? (currentStep.statePreview ?? playbackFrom ?? list)
+    : isAnimating
+      ? (overlay.displayList ?? playbackFrom ?? list)
+      : list;
 
   useLayoutEffect(() => {
     const pending = pendingLayout.current;
@@ -151,7 +159,11 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
     () => {
       const root = rootRef.current;
       const state = usePlaygroundStore.getState();
-      if (!root || state.playbackKind === "idle") {
+      if (
+        !root ||
+        state.playbackKind === "idle" ||
+        state.playbackKind === "step"
+      ) {
         return;
       }
 
@@ -306,14 +318,23 @@ export function useListPlayback(rootRef: RefObject<HTMLElement | null>) {
     { scope: rootRef, dependencies: [sessionId] },
   );
 
+  const cellStates = currentStep
+    ? displayList.map((_, index) => cellVisualStateAt(currentStep, index))
+    : undefined;
+
   return {
     displayList,
-    incoming: overlay.incoming,
-    secondary: overlay.secondary,
-    secondaryLabels: overlay.secondaryLabels,
-    scanCount,
-    disclaimer,
-    visualizerError,
-    interactive: !isAnimating,
+    incoming: currentStep ? [] : overlay.incoming,
+    secondary: currentStep
+      ? (currentStep.secondaryPreview ?? null)
+      : overlay.secondary,
+    secondaryLabels: currentStep
+      ? (currentStep.secondaryLabels ?? null)
+      : overlay.secondaryLabels,
+    scanCount: currentStep ? (currentStep.scanCount ?? null) : scanCount,
+    disclaimer: currentStep ? (currentStep.disclaimer ?? null) : disclaimer,
+    visualizerError: currentStep ? Boolean(currentStep.error) : visualizerError,
+    interactive: !isAnimating && !currentStep,
+    cellStates,
   };
 }

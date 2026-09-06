@@ -20,6 +20,7 @@ import type { MethodId, OperationResult, PlaygroundErrorType } from "@/lib/pytho
 export type PlaybackKind =
   | "idle"
   | "operation"
+  | "step"
   | "undo"
   | "redo"
   | "reset"
@@ -96,7 +97,7 @@ export function isRunLocked(state: {
 }): boolean {
   return (
     state.isAnimating &&
-    state.playbackKind === "operation" &&
+    (state.playbackKind === "operation" || state.playbackKind === "step") &&
     state.lastResult?.mutates === true &&
     !state.lastResult.error
   );

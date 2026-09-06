@@ -1,13 +1,18 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ListCell } from "./ListCell";
+import type { CellVisualState } from "@/lib/animations/highlights";
 import type { SecondaryLabels } from "@/lib/animations/playback";
+import {
+  buildXRayCopyDescription,
+  buildXRayView,
+} from "@/lib/playground/xray";
 import { pythonString } from "@/lib/python/values";
 import type { ListItem } from "@/lib/python/types";
 import { cn } from "@/lib/utils";
@@ -22,6 +27,7 @@ type ListVisualizerProps = {
   disclaimer: string | null;
   visualizerError: boolean;
   interactive: boolean;
+  cellStates?: CellVisualState[];
 };
 
 function CellRow({
@@ -29,6 +35,7 @@ function CellRow({
   track,
   interactive,
   editingId,
+  cellStates,
   onStartEdit,
   onCancelEdit,
   onSave,
@@ -38,6 +45,7 @@ function CellRow({
   track: "list" | "incoming" | "secondary";
   interactive: boolean;
   editingId: string | null;
+  cellStates?: CellVisualState[];
   onStartEdit: (id: string) => void;
   onCancelEdit: () => void;
   onSave: (id: string, value: ListItem["value"]) => void;
@@ -59,6 +67,7 @@ function CellRow({
             index={index}
             isEditing={interactive && editingId === item.id}
             interactive={interactive}
+            visualState={cellStates?.[index] ?? "idle"}
             onStartEdit={() => onStartEdit(item.id)}
             onCancelEdit={onCancelEdit}
             onSave={(value) => onSave(item.id, value)}
@@ -67,6 +76,100 @@ function CellRow({
         </li>
       ))}
     </ul>
+  );
+}
+
+function EmptyList() {
+  return (
+    <p
+      data-empty-state
+      className="mb-3 rounded-lg border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground"
+    >
+      [] Your list is empty.
+    </p>
+  );
+}
+
+function XRayPointer({ name }: { name: string }) {
+  return (
+    <div className="mb-3 flex flex-col items-start gap-1">
+      <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+        Variable
+      </p>
+      <p className="font-mono text-sm font-medium">{name}</p>
+      <span
+        aria-hidden="true"
+        className="ml-3 flex flex-col items-center text-muted-foreground"
+      >
+        <span className="h-4 w-px bg-border" />
+        <ChevronDownIcon className="size-3.5" />
+      </span>
+    </div>
+  );
+}
+
+function XRayTrack({
+  name,
+  items,
+  track,
+  lengthLabel,
+  cellStates,
+  interactive,
+  editingId,
+  onStartEdit,
+  onCancelEdit,
+  onSave,
+  onDelete,
+}: {
+  name: string;
+  items: ListItem[];
+  track: "list" | "secondary";
+  lengthLabel: string;
+  cellStates?: CellVisualState[];
+  interactive: boolean;
+  editingId: string | null;
+  onStartEdit: (id: string) => void;
+  onCancelEdit: () => void;
+  onSave: (id: string, value: ListItem["value"]) => void;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <XRayPointer name={name} />
+      <div className="flex gap-3 overflow-x-auto">
+        <div className="flex shrink-0 flex-col justify-center gap-8 pt-1">
+          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+            Index
+          </p>
+          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+            Value
+          </p>
+        </div>
+        <div className="min-w-0 flex-1">
+          {items.length === 0 ? (
+            <p
+              data-empty-state={track === "list" ? "true" : undefined}
+              className="rounded-lg border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground"
+            >
+              [] Your list is empty.
+            </p>
+          ) : (
+            <CellRow
+              items={items}
+              track={track}
+              interactive={interactive}
+              editingId={editingId}
+              cellStates={cellStates}
+              onStartEdit={onStartEdit}
+              onCancelEdit={onCancelEdit}
+              onSave={onSave}
+              onDelete={onDelete}
+            />
+          )}
+        </div>
+      </div>
+      <p className="font-mono text-xs text-muted-foreground">{lengthLabel}</p>
+    </div>
   );
 }
 
@@ -79,17 +182,44 @@ export function ListVisualizer({
   disclaimer,
   visualizerError,
   interactive,
+  cellStates,
 }: ListVisualizerProps) {
   const variableName = usePlaygroundStore((state) => state.variableName);
   const setVariableName = usePlaygroundStore((state) => state.setVariableName);
   const addListItem = usePlaygroundStore((state) => state.addListItem);
   const updateListItem = usePlaygroundStore((state) => state.updateListItem);
   const removeListItem = usePlaygroundStore((state) => state.removeListItem);
+  const xRayMode = usePlaygroundStore((state) => state.xRayMode);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  const xray = buildXRayView(variableName, displayList);
+  const copyView =
+    Boolean(secondary) && secondaryLabels?.destination === "copied";
+  const copyDescription =
+    copyView && secondaryLabels
+      ? buildXRayCopyDescription(secondaryLabels.source, secondaryLabels.destination)
+      : null;
+
+  const cellHandlers = {
+    editingId,
+    onStartEdit: setEditingId,
+    onCancelEdit: () => setEditingId(null),
+    onSave: (id: string, value: ListItem["value"]) => {
+      updateListItem(id, value);
+      setEditingId(null);
+    },
+    onDelete: (id: string) => {
+      if (editingId === id) {
+        setEditingId(null);
+      }
+      removeListItem(id);
+    },
+  };
 
   return (
     <section
       data-list-visualizer
+      data-xray={xRayMode ? "true" : "false"}
       data-visualizer-error={visualizerError ? "true" : "false"}
       aria-labelledby="list-visualizer-heading"
       className={cn(
@@ -108,9 +238,15 @@ export function ListVisualizer({
             className="min-h-11 font-mono"
           />
         </div>
-        <p className="font-mono text-xs text-muted-foreground">
-          {displayList.length} {displayList.length === 1 ? "item" : "items"}
-        </p>
+        {xRayMode ? (
+          <p className="font-mono text-xs text-muted-foreground">
+            Length: {displayList.length}
+          </p>
+        ) : (
+          <p className="font-mono text-xs text-muted-foreground">
+            {displayList.length} {displayList.length === 1 ? "item" : "items"}
+          </p>
+        )}
         {scanCount !== null ? (
           <p
             data-scan-count
@@ -124,40 +260,75 @@ export function ListVisualizer({
       <h3 id="list-visualizer-heading" className="sr-only">
         {variableName}
       </h3>
-
-      {secondary ? (
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Original
-          {secondaryLabels ? ` · ${secondaryLabels.source}` : ""}
+      {xRayMode ? (
+        <p className="sr-only">
+          {copyDescription ?? xray.description}
         </p>
       ) : null}
 
-      {displayList.length === 0 ? (
-        <p
-          data-empty-state
-          className="mb-3 rounded-lg border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground"
-        >
-          [] Your list is empty.
-        </p>
+      {xRayMode && copyView && secondary && secondaryLabels ? (
+        <div className="flex flex-col gap-6">
+          <XRayTrack
+            name={secondaryLabels.source}
+            items={displayList}
+            track="list"
+            lengthLabel={`Length: ${displayList.length}`}
+            cellStates={cellStates}
+            interactive={interactive}
+            {...cellHandlers}
+          />
+          <XRayTrack
+            name={secondaryLabels.destination}
+            items={secondary}
+            track="secondary"
+            lengthLabel={`Length: ${secondary.length}`}
+            interactive={false}
+            editingId={null}
+            onStartEdit={() => undefined}
+            onCancelEdit={() => undefined}
+            onSave={() => undefined}
+            onDelete={() => undefined}
+          />
+        </div>
+      ) : xRayMode ? (
+        <>
+          {secondary && !copyView ? (
+            <p className="mb-2 text-xs font-medium text-muted-foreground">
+              Original
+              {secondaryLabels ? ` · ${secondaryLabels.source}` : ""}
+            </p>
+          ) : null}
+          <XRayTrack
+            name={variableName}
+            items={displayList}
+            track="list"
+            lengthLabel={`Length: ${displayList.length}`}
+            cellStates={cellStates}
+            interactive={interactive}
+            {...cellHandlers}
+          />
+        </>
       ) : (
-        <CellRow
-          items={displayList}
-          track="list"
-          interactive={interactive}
-          editingId={editingId}
-          onStartEdit={setEditingId}
-          onCancelEdit={() => setEditingId(null)}
-          onSave={(id, value) => {
-            updateListItem(id, value);
-            setEditingId(null);
-          }}
-          onDelete={(id) => {
-            if (editingId === id) {
-              setEditingId(null);
-            }
-            removeListItem(id);
-          }}
-        />
+        <>
+          {secondary ? (
+            <p className="mb-2 text-xs font-medium text-muted-foreground">
+              Original
+              {secondaryLabels ? ` · ${secondaryLabels.source}` : ""}
+            </p>
+          ) : null}
+
+          {displayList.length === 0 ? (
+            <EmptyList />
+          ) : (
+            <CellRow
+              items={displayList}
+              track="list"
+              interactive={interactive}
+              cellStates={cellStates}
+              {...cellHandlers}
+            />
+          )}
+        </>
       )}
 
       {incoming.length > 0 ? (
@@ -178,13 +349,26 @@ export function ListVisualizer({
         </div>
       ) : null}
 
-      {secondary ? (
+      {secondary && !(xRayMode && copyView) ? (
         <div className="mt-4">
           <p className="mb-2 text-xs font-medium text-muted-foreground">
             {secondaryLabels?.destination === "sorted" ? "Sorted" : "Copy"}
             {secondaryLabels ? ` · ${secondaryLabels.destination}` : ""}
           </p>
-          {secondary.length === 0 ? (
+          {xRayMode ? (
+            <XRayTrack
+              name={secondaryLabels?.destination ?? "copy"}
+              items={secondary}
+              track="secondary"
+              lengthLabel={`Length: ${secondary.length}`}
+              interactive={false}
+              editingId={null}
+              onStartEdit={() => undefined}
+              onCancelEdit={() => undefined}
+              onSave={() => undefined}
+              onDelete={() => undefined}
+            />
+          ) : secondary.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
               []
             </p>

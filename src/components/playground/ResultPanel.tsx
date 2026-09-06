@@ -14,14 +14,21 @@ export function ResultPanel() {
   const list = usePlaygroundStore((state) => state.list);
   const resultRevealed = usePlaygroundStore((state) => state.resultRevealed);
   const isAnimating = usePlaygroundStore((state) => state.isAnimating);
+  const playbackKind = usePlaygroundStore((state) => state.playbackKind);
+  const steps = usePlaygroundStore((state) => state.steps);
+  const stepIndex = usePlaygroundStore((state) => state.stepIndex);
   const method = getMethod(selectedMethod);
 
-  const showResult = Boolean(lastResult) && resultRevealed;
-  const announcement = showResult && lastResult
-    ? buildResultAnnouncement(lastResult, list.length)
-    : isAnimating
-      ? "The list operation is playing."
-      : `${method.label} is ready to run.`;
+  const currentStep = playbackKind === "step" ? steps[stepIndex] : undefined;
+  const stepping = Boolean(currentStep);
+  const showResult = Boolean(lastResult) && resultRevealed && !stepping;
+  const announcement = stepping && currentStep
+    ? currentStep.explanation
+    : showResult && lastResult
+      ? buildResultAnnouncement(lastResult, list.length)
+      : isAnimating
+        ? "The list operation is playing."
+        : `${method.label} is ready to run.`;
 
   const listChanged = showResult && lastResult
     ? lastResult.mutates && !lastResult.error
@@ -30,7 +37,7 @@ export function ResultPanel() {
     ? lastResult.error
       ? "—"
       : formatReturnValue(lastResult.returnValue)
-    : isAnimating && lastResult
+    : (isAnimating || stepping) && lastResult
       ? "…"
       : method.returnType;
 
@@ -43,7 +50,9 @@ export function ResultPanel() {
         <h3 id="result-panel-heading" className="text-sm font-medium">
           Result
         </h3>
-        {showResult && lastResult?.error ? (
+        {stepping ? (
+          <Badge variant="outline">Step</Badge>
+        ) : showResult && lastResult?.error ? (
           <Badge variant="destructive">{lastResult.error.type}</Badge>
         ) : showResult && lastResult ? (
           <Badge variant="outline">Ran</Badge>
@@ -75,9 +84,15 @@ export function ResultPanel() {
             {lastResult.error.message}
           </p>
         </div>
+      ) : stepping && currentStep?.error ? (
+        <p className="text-sm text-destructive">{currentStep.explanation}</p>
       ) : (
         <p className="text-sm text-muted-foreground">
-          {showResult && lastResult ? lastResult.explanation : method.explanation}
+          {stepping && currentStep
+            ? currentStep.explanation
+            : showResult && lastResult
+              ? lastResult.explanation
+              : method.explanation}
         </p>
       )}
 
@@ -85,7 +100,7 @@ export function ResultPanel() {
         <div className="flex flex-col gap-1 rounded-lg bg-muted/70 px-3 py-2">
           <dt className="text-xs text-muted-foreground">List changed</dt>
           <dd className="font-medium">
-            {showResult ? (listChanged ? "Yes" : "No") : isAnimating ? "…" : listChanged ? "Yes" : "No"}
+            {showResult ? (listChanged ? "Yes" : "No") : isAnimating || stepping ? "…" : listChanged ? "Yes" : "No"}
           </dd>
         </div>
         <div className="flex flex-col gap-1 rounded-lg bg-muted/70 px-3 py-2">

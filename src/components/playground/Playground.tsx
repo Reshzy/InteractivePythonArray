@@ -7,6 +7,7 @@ import {
   registerGsapPlugins,
   useGSAP,
 } from "@/lib/animations/gsap-client";
+import { parseShareSearchParams } from "@/lib/playground/share";
 import { isRunLocked } from "@/lib/animations/playback";
 import { usePlaygroundStore } from "@/store/playground-store";
 
@@ -17,6 +18,7 @@ import { MethodControls } from "./MethodControls";
 import { MethodNavigation } from "./MethodNavigation";
 import { PlaygroundToolbar } from "./PlaygroundToolbar";
 import { ResultPanel } from "./ResultPanel";
+import { StepControls } from "./StepControls";
 import { useListPlayback } from "./use-list-playback";
 
 registerGsapPlugins();
@@ -36,6 +38,15 @@ export function Playground() {
   const playback = useListPlayback(playgroundRef);
 
   useEffect(() => {
+    const parsed = parseShareSearchParams(
+      new URLSearchParams(window.location.search),
+    );
+    if (parsed.ok) {
+      usePlaygroundStore.getState().loadSharedState(parsed.snapshot);
+      usePlaygroundStore.getState().setHasHydrated(true);
+      return;
+    }
+
     void Promise.resolve(usePlaygroundStore.persist.rehydrate()).finally(() => {
       usePlaygroundStore.getState().setHasHydrated(true);
     });
@@ -136,7 +147,9 @@ export function Playground() {
           disclaimer={playback.disclaimer}
           visualizerError={playback.visualizerError}
           interactive={playback.interactive}
+          cellStates={playback.cellStates}
         />
+        <StepControls />
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start">
           <div className="flex flex-col gap-4">

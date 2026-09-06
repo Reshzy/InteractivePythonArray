@@ -3,6 +3,10 @@
 import { MiniList } from "@/components/learn/MiniList";
 import { TryItButton } from "@/components/learn/TryItButton";
 import { COMPARISONS, type ComparisonSide } from "@/data/comparisons";
+import {
+  buildXRayAssignmentDescription,
+  buildXRayCopyDescription,
+} from "@/lib/playground/xray";
 
 export function ComparisonLessons() {
   return (
@@ -24,6 +28,10 @@ export function ComparisonLessons() {
             <ComparisonColumn side={comparison.left} />
             <ComparisonColumn side={comparison.right} />
           </div>
+
+          {comparison.id === "copy-assignment" ? (
+            <CopyAssignmentDiagram />
+          ) : null}
 
           <ul className="flex list-disc flex-col gap-1 pl-4 text-sm text-muted-foreground">
             {comparison.teachingPoints.map((point) => (
@@ -66,6 +74,28 @@ function ComparisonColumn({ side }: { side: ComparisonSide }) {
           {`Try ${side.title}`}
         </TryItButton>
       ) : null}
+    </div>
+  );
+}
+
+function CopyAssignmentDiagram() {
+  return (
+    <div className="grid gap-3 md:grid-cols-2">
+      <div className="rounded-lg border border-border bg-muted/30 px-3 py-3">
+        <p className="mb-2 font-mono text-xs font-medium">copy()</p>
+        <p className="sr-only">{buildXRayCopyDescription("a", "b")}</p>
+        <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground">
+          <p>a ───&gt; list A</p>
+          <p>b ───&gt; list B</p>
+        </div>
+      </div>
+      <div className="rounded-lg border border-border bg-muted/30 px-3 py-3">
+        <p className="mb-2 font-mono text-xs font-medium">assignment</p>
+        <p className="sr-only">{buildXRayAssignmentDescription("a", "b")}</p>
+        <pre className="font-mono text-xs text-muted-foreground">{`a ─┐
+   ├──> same list
+b ─┘`}</pre>
+      </div>
     </div>
   );
 }

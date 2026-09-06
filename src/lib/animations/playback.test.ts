@@ -153,5 +153,13 @@ describe("isRunLocked", () => {
         lastResult: result({ type: "append", addedIndex: 1 }, { mutates: true }),
       }),
     ).toBe(false);
+
+    expect(
+      isRunLocked({
+        isAnimating: true,
+        playbackKind: "step",
+        lastResult: result({ type: "insert", insertedIndex: 1, shiftedIndices: [1] }, { mutates: true }),
+      }),
+    ).toBe(true);
   });
 });

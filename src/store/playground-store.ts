@@ -33,6 +33,11 @@ import { isRunLocked, type PlaybackKind } from "@/lib/animations/playback";
 
 export { isRunLocked };
 import { prefersReducedMotion } from "@/lib/animations/reduced-motion";
+import type { SharedPlaygroundState } from "@/lib/playground/share";
+import {
+  buildOperationSteps,
+  type OperationStep,
+} from "@/lib/playground/steps";
 import {
   cloneList,
   clonePythonValue,
@@ -79,6 +84,11 @@ export type PlaygroundState = {
   playbackSessionId: number;
   playbackFrom: ListItem[] | null;
   activeChallengeId: ChallengeId | null;
+  xRayMode: boolean;
+  stepMode: boolean;
+  steps: OperationStep[];
+  stepIndex: number;
+  stepPlaying: boolean;
 };
 
 export type PersistedPlaygroundState = {
@@ -88,6 +98,8 @@ export type PersistedPlaygroundState = {
   arguments: OperationArguments;
   animationSpeed: AnimationSpeed;
   selectedPreset: PresetId | null;
+  xRayMode: boolean;
+  stepMode: boolean;
 };
 
 export type PlaygroundActions = {
@@ -112,6 +124,12 @@ export type PlaygroundActions = {
   tryMethod: (method: MethodId, snapshot?: MethodTryIt) => void;
   loadChallenge: (challenge: Challenge) => void;
   setAnimationSpeed: (animationSpeed: AnimationSpeed) => void;
+  setXRayMode: (xRayMode: boolean) => void;
+  setStepMode: (stepMode: boolean) => void;
+  stepBack: () => void;
+  stepForward: () => void;
+  setStepPlaying: (stepPlaying: boolean) => void;
+  loadSharedState: (snapshot: SharedPlaygroundState) => void;
   completePlayback: () => void;
   revealResult: () => void;
   cancelPlayback: () => void;
@@ -142,6 +160,11 @@ export function createDefaultPlaygroundState(): PlaygroundState {
     playbackSessionId: 0,
     playbackFrom: null,
     activeChallengeId: null,
+    xRayMode: false,
+    stepMode: false,
+    steps: [],
+    stepIndex: 0,
+    stepPlaying: false,
   };
 }
 
@@ -175,6 +198,17 @@ function startPlaybackSession(
   };
 }
 
+function idleStepFields(): Pick<
+  PlaygroundState,
+  "steps" | "stepIndex" | "stepPlaying"
+> {
+  return {
+    steps: [],
+    stepIndex: 0,
+    stepPlaying: false,
+  };
+}
+
 export function canUndo(state: Pick<PlaygroundState, "historyIndex">): boolean {
   return state.historyIndex >= 0;
 }
@@ -183,6 +217,18 @@ export function canRedo(
   state: Pick<PlaygroundState, "history" | "historyIndex">,
 ): boolean {
   return state.historyIndex < state.history.length - 1;
+}
+
+export function canStepBack(
+  state: Pick<PlaygroundState, "playbackKind" | "stepIndex">,
+): boolean {
+  return state.playbackKind === "step" && state.stepIndex > 0;
+}
+
+export function canStepForward(
+  state: Pick<PlaygroundState, "playbackKind" | "steps">,
+): boolean {
+  return state.playbackKind === "step" && state.steps.length > 0;
 }
 
 function clientFailureResult(
@@ -242,9 +288,13 @@ export function createPlaygroundApi(
 
     setSelectedMethod: (method) => {
       const state = get();
+      if (state.playbackKind === "step") {
+        get().completePlayback();
+      }
+      const latest = get();
       set({
         selectedMethod: method,
-        arguments: argumentsForMethod(method, state.arguments),
+        arguments: argumentsForMethod(method, latest.arguments),
         lastResult: null,
       });
     },
@@ -377,12 +427,33 @@ export function createPlaygroundApi(
         : clientFailureResult(state.list, built.error, built.code);
 
       const entry = createHistoryEntry(state.selectedMethod, result);
+      const steps = state.stepMode
+        ? buildOperationSteps({
+            result,
+            method: state.selectedMethod,
+          })
+        : [];
+
+      if (steps.length > 0) {
+        set({
+          list: cloneList(result.after),
+          lastResult: result,
+          selectedPreset: result.mutates ? null : state.selectedPreset,
+          ...pushHistory(state, entry),
+          ...startPlaybackSession(state, "step", false, result.before),
+          steps,
+          stepIndex: 0,
+          stepPlaying: false,
+        });
+        return;
+      }
 
       set({
         list: cloneList(result.after),
         lastResult: result,
         selectedPreset: result.mutates ? null : state.selectedPreset,
         ...pushHistory(state, entry),
+        ...idleStepFields(),
         ...startPlaybackSession(
           state,
           "operation",
@@ -410,6 +481,7 @@ export function createPlaygroundApi(
         lastResult: previous?.result ?? null,
         historyIndex: state.historyIndex - 1,
         selectedPreset: null,
+        ...idleStepFields(),
         ...startPlaybackSession(state, "undo", true, state.list),
       });
     },
@@ -431,6 +503,7 @@ export function createPlaygroundApi(
         lastResult: entry.result,
         historyIndex: nextIndex,
         selectedPreset: null,
+        ...idleStepFields(),
         ...startPlaybackSession(state, "redo", true, state.list),
       });
     },
@@ -440,6 +513,8 @@ export function createPlaygroundApi(
       set({
         ...createDefaultPlaygroundState(),
         animationSpeed: current.animationSpeed,
+        xRayMode: current.xRayMode,
+        stepMode: current.stepMode,
         hasHydrated: current.hasHydrated,
         isAnimating: true,
         playbackKind: "reset",
@@ -462,6 +537,7 @@ export function createPlaygroundApi(
         historyIndex: -1,
         arguments: argumentsForMethod(state.selectedMethod, state.arguments),
         activeChallengeId: null,
+        ...idleStepFields(),
         ...startPlaybackSession(state, "preset", true, state.list),
       });
     },
@@ -483,6 +559,7 @@ export function createPlaygroundApi(
         resultRevealed: true,
         playbackFrom: null,
         playbackSessionId: state.playbackSessionId + 1,
+        ...idleStepFields(),
       });
     },
 
@@ -505,10 +582,85 @@ export function createPlaygroundApi(
         resultRevealed: true,
         playbackFrom: null,
         playbackSessionId: state.playbackSessionId + 1,
+        ...idleStepFields(),
       });
     },
 
     setAnimationSpeed: (animationSpeed) => set({ animationSpeed }),
+
+    setXRayMode: (xRayMode) => set({ xRayMode }),
+
+    setStepMode: (stepMode) => {
+      const state = get();
+      if (!stepMode && state.playbackKind === "step") {
+        set({
+          stepMode: false,
+          isAnimating: false,
+          playbackKind: "idle",
+          resultRevealed: true,
+          playbackFrom: null,
+          ...idleStepFields(),
+        });
+        return;
+      }
+      set({ stepMode });
+    },
+
+    stepBack: () => {
+      const state = get();
+      if (!canStepBack(state)) {
+        return;
+      }
+      set({
+        stepIndex: state.stepIndex - 1,
+        stepPlaying: false,
+        resultRevealed: false,
+      });
+    },
+
+    stepForward: () => {
+      const state = get();
+      if (!canStepForward(state)) {
+        return;
+      }
+      if (state.stepIndex >= state.steps.length - 1) {
+        get().completePlayback();
+        return;
+      }
+      set({ stepIndex: state.stepIndex + 1 });
+    },
+
+    setStepPlaying: (stepPlaying) => {
+      const state = get();
+      if (state.playbackKind !== "step") {
+        return;
+      }
+      set({ stepPlaying });
+    },
+
+    loadSharedState: (snapshot) => {
+      const state = get();
+      set({
+        variableName: snapshot.variableName,
+        list: snapshot.list.map((item) => ({
+          id: item.id,
+          value: clonePythonValue(item.value),
+        })),
+        selectedMethod: snapshot.selectedMethod,
+        arguments: cloneArguments(snapshot.arguments),
+        selectedPreset: snapshot.selectedPreset,
+        lastResult: null,
+        history: [],
+        historyIndex: -1,
+        activeChallengeId: null,
+        isAnimating: false,
+        playbackKind: "idle",
+        resultRevealed: true,
+        playbackFrom: null,
+        playbackSessionId: state.playbackSessionId + 1,
+        ...idleStepFields(),
+      });
+    },
 
     completePlayback: () =>
       set({
@@ -516,6 +668,7 @@ export function createPlaygroundApi(
         playbackKind: "idle",
         resultRevealed: true,
         playbackFrom: null,
+        ...idleStepFields(),
       }),
 
     revealResult: () => set({ resultRevealed: true }),
@@ -532,6 +685,7 @@ export function createPlaygroundApi(
         resultRevealed: true,
         playbackFrom: null,
         playbackSessionId: state.playbackSessionId + 1,
+        ...idleStepFields(),
       });
     },
   };
@@ -642,6 +796,8 @@ export function parsePersistedState(
     arguments?: unknown;
     animationSpeed?: unknown;
     selectedPreset?: unknown;
+    xRayMode?: unknown;
+    stepMode?: unknown;
   };
 
   if (typeof candidate.variableName !== "string") {
@@ -681,6 +837,8 @@ export function parsePersistedState(
     arguments: cloneArguments(candidate.arguments),
     animationSpeed: candidate.animationSpeed,
     selectedPreset: candidate.selectedPreset,
+    xRayMode: candidate.xRayMode === true,
+    stepMode: candidate.stepMode === true,
   };
 }
 
@@ -698,6 +856,8 @@ export const usePlaygroundStore = create<PlaygroundStore>()(
         arguments: state.arguments,
         animationSpeed: state.animationSpeed,
         selectedPreset: state.selectedPreset,
+        xRayMode: state.xRayMode,
+        stepMode: state.stepMode,
       }),
       merge: (persistedState, currentState) => {
         const persisted = parsePersistedState(

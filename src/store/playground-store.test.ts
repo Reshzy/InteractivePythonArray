@@ -4,8 +4,10 @@ import { CHALLENGES, getChallenge } from "@/data/challenges";
 import { evaluateChallenge } from "@/lib/challenges/evaluate";
 import { createDefaultArguments } from "@/lib/playground/arguments";
 import { pythonNumber, pythonString } from "@/lib/python/values";
+import { parseShareSearchParams } from "@/lib/playground/share";
 import {
   canRedo,
+  canStepBack,
   canUndo,
   createPlaygroundStore,
   parsePersistedState,
@@ -301,6 +303,92 @@ describe("playground store", () => {
     }
   });
 
+  it("loadSharedState restores a snapshot and clears history", () => {
+    const store = createPlaygroundStore();
+    store.getState().executeOperation();
+
+    const parsed = parseShareSearchParams(
+      new URLSearchParams("preset=numbers&method=sort"),
+    );
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) {
+      return;
+    }
+
+    store.getState().loadSharedState(parsed.snapshot);
+    const state = store.getState();
+    expect(state.variableName).toBe("numbers");
+    expect(state.selectedMethod).toBe("sort");
+    expect(state.list.map((item) => item.value)).toEqual([
+      pythonNumber(8),
+      pythonNumber(3),
+      pythonNumber(12),
+      pythonNumber(1),
+    ]);
+    expect(state.history).toEqual([]);
+    expect(state.lastResult).toBeNull();
+    expect(state.activeChallengeId).toBeNull();
+    expect(state.isAnimating).toBe(false);
+  });
+
+  it("steps through len and commits the list immediately", () => {
+    const store = createPlaygroundStore();
+    const originalIds = ids(store);
+    store.getState().setStepMode(true);
+    store.getState().setSelectedMethod("len");
+    store.getState().executeOperation();
+
+    let state = store.getState();
+    expect(state.playbackKind).toBe("step");
+    expect(state.steps.length).toBeGreaterThan(1);
+    expect(state.stepIndex).toBe(0);
+    expect(state.resultRevealed).toBe(false);
+    expect(ids(store)).toEqual(originalIds);
+    expect(canStepBack(state)).toBe(false);
+
+    store.getState().stepForward();
+    expect(store.getState().stepIndex).toBe(1);
+
+    store.getState().stepBack();
+    expect(store.getState().stepIndex).toBe(0);
+
+    while (store.getState().playbackKind === "step") {
+      store.getState().stepForward();
+    }
+
+    state = store.getState();
+    expect(state.playbackKind).toBe("idle");
+    expect(state.resultRevealed).toBe(true);
+    expect(state.steps).toEqual([]);
+    expect(state.lastResult?.returnValue).toEqual(pythonNumber(3));
+  });
+
+  it("locks mutating step playback and finishes cleanly when Step mode is turned off", () => {
+    const store = createPlaygroundStore();
+    store.getState().setStepMode(true);
+    store.getState().setSelectedMethod("insert");
+    store.getState().setIndexText("0");
+    store.getState().setValueDraft({
+      type: "string",
+      text: "kiwi",
+      booleanValue: true,
+    });
+    store.getState().executeOperation();
+
+    expect(store.getState().playbackKind).toBe("step");
+    expect(store.getState().list).toHaveLength(4);
+
+    store.getState().executeOperation();
+    expect(store.getState().history).toHaveLength(1);
+
+    store.getState().setStepMode(false);
+    const state = store.getState();
+    expect(state.stepMode).toBe(false);
+    expect(state.playbackKind).toBe("idle");
+    expect(state.resultRevealed).toBe(true);
+    expect(state.list).toHaveLength(4);
+  });
+
   it("allows undo during a mutation animation without replaying the method", () => {
     const store = createPlaygroundStore();
     const originalIds = ids(store);
@@ -343,9 +431,15 @@ describe("parsePersistedState", () => {
       selectedPreset: "numbers" as const,
     };
 
-    expect(parsePersistedState({ state: snapshot, version: 1 })).toEqual(
-      snapshot,
-    );
-    expect(parsePersistedState(snapshot)).toEqual(snapshot);
+    expect(parsePersistedState({ state: snapshot, version: 1 })).toEqual({
+      ...snapshot,
+      xRayMode: false,
+      stepMode: false,
+    });
+    expect(parsePersistedState(snapshot)).toEqual({
+      ...snapshot,
+      xRayMode: false,
+      stepMode: false,
+    });
   });
 });
