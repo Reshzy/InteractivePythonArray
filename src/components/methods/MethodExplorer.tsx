@@ -32,6 +32,7 @@ export function MethodExplorer() {
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search methods..."
           autoComplete="off"
+          className="min-h-11"
         />
       </Field>
 

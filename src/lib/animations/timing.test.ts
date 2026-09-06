@@ -6,6 +6,7 @@ import {
   LARGE_LIST_THRESHOLD,
   scaleDuration,
   scanStepDuration,
+  stepAutoplayDelayMs,
 } from "./timing";
 
 describe("scaleDuration", () => {
@@ -52,5 +53,14 @@ describe("scanStepDuration", () => {
         simplify: false,
       }),
     ).toBe(0.05);
+  });
+});
+
+describe("stepAutoplayDelayMs", () => {
+  it("uses a shorter delay when reduced motion is preferred", () => {
+    expect(stepAutoplayDelayMs(1, false)).toBeGreaterThan(
+      stepAutoplayDelayMs(1, true),
+    );
+    expect(stepAutoplayDelayMs(1, true)).toBe(460);
   });
 });

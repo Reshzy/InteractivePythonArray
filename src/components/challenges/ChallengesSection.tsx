@@ -292,6 +292,12 @@ function ChallengeFeedback({
           ease: "back.out(1.7)",
         },
       );
+
+      return () => {
+        if (checkRef.current) {
+          gsap.killTweensOf(checkRef.current);
+        }
+      };
     },
     { dependencies: [verdict.status, verdict.message] },
   );

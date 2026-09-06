@@ -48,10 +48,12 @@ export function Hero() {
   return (
     <section
       ref={heroRef}
+      aria-labelledby="hero-heading"
       className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-10 md:py-14"
     >
       <div className="max-w-2xl">
         <h1
+          id="hero-heading"
           data-hero-copy
           className="text-3xl font-medium tracking-tight text-balance sm:text-4xl"
         >

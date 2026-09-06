@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -37,26 +37,25 @@ export function ThemeToggle() {
         <MoonIcon className="hidden dark:inline" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuGroup>
-          {THEMES.map(({ value, label, icon: Icon }) => {
-            const isCurrent = theme === value;
-
-            return (
-              <DropdownMenuItem
-                key={value}
-                onClick={() => setTheme(value)}
-              >
-                <Icon />
-                <span>{label}</span>
-                {isCurrent ? (
-                  <span className="ml-auto text-xs text-muted-foreground">
-                    Current
-                  </span>
-                ) : null}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuGroup>
+        <DropdownMenuRadioGroup
+          value={theme ?? "system"}
+          onValueChange={(value) => {
+            if (value) {
+              setTheme(value);
+            }
+          }}
+        >
+          {THEMES.map(({ value, label, icon: Icon }) => (
+            <DropdownMenuRadioItem
+              key={value}
+              value={value}
+              className="min-h-11"
+            >
+              <Icon />
+              <span>{label}</span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

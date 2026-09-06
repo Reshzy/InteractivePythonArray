@@ -218,5 +218,9 @@
     [data-cell-body] {
       transition: none;
     }
+
+    [data-creator-signature] span {
+      transform: none;
+    }
   }
 }

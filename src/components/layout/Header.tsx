@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 const NAV_LINKS = [
   { href: "/#playground", label: "Playground" },
   { href: "/#methods", label: "Methods" },
+  { href: "/#comparisons", label: "Comparisons" },
   { href: "/#challenges", label: "Challenges" },
 ] as const;
 

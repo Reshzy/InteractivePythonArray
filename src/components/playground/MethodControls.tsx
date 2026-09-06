@@ -161,15 +161,31 @@ export function MethodControls() {
         <p className="text-sm text-muted-foreground">No arguments needed.</p>
       )}
 
-      <Button
-        type="button"
-        className="min-h-11 w-full"
-        onClick={execute}
-        disabled={runLocked}
-      >
-        <PlayIcon data-icon="inline-start" />
-        Run {method.label}
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button
+          type="button"
+          className="min-h-11 w-full"
+          onClick={execute}
+          disabled={runLocked}
+        >
+          <PlayIcon data-icon="inline-start" />
+          Run {method.label}
+        </Button>
+        <p className="hidden text-center text-xs text-muted-foreground sm:block">
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Ctrl
+          </kbd>
+          {" / "}
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Cmd
+          </kbd>
+          {" + "}
+          <kbd className="rounded-md border border-border bg-muted px-1.5 py-0.5 font-mono text-[0.7rem]">
+            Enter
+          </kbd>
+          {" to run"}
+        </p>
+      </div>
     </section>
   );
 }

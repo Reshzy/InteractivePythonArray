@@ -10,8 +10,20 @@ import type {
   ListItem,
   MethodId,
   OperationResult,
+  PlaygroundError,
   PythonValue,
 } from "@/lib/python/types";
+
+const EXACT_ERROR_MESSAGE_MAX_LENGTH = 120;
+
+export function shouldShowExactErrorMessage(error: PlaygroundError): boolean {
+  const exact = error.message.trim();
+  if (!exact || exact.length > EXACT_ERROR_MESSAGE_MAX_LENGTH) {
+    return false;
+  }
+
+  return exact !== error.friendlyMessage.trim();
+}
 
 export function formatReturnValue(
   value: PythonValue | ListItem[] | undefined,

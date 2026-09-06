@@ -3,7 +3,13 @@
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { BASE_DURATIONS, scaleDuration } from "@/lib/animations/timing";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { prefersReducedMotion } from "@/lib/animations/reduced-motion";
+import { stepAutoplayDelayMs } from "@/lib/animations/timing";
 import {
   canStepBack,
   canStepForward,
@@ -25,7 +31,10 @@ export function StepControls() {
       return;
     }
 
-    const delay = scaleDuration(BASE_DURATIONS.scanStep, animationSpeed) * 1000 + 420;
+    const delay = stepAutoplayDelayMs(
+      animationSpeed,
+      prefersReducedMotion(),
+    );
     const timer = window.setTimeout(() => {
       usePlaygroundStore.getState().stepForward();
     }, delay);
@@ -47,19 +56,27 @@ export function StepControls() {
       data-step-controls
       className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-card px-3 py-2"
     >
-      <Button
-        type="button"
-        variant="outline"
-        className="min-h-11"
-        onClick={() => {
-          setStepPlaying(false);
-          stepBack();
-        }}
-        disabled={!backEnabled}
-        aria-label="Previous step"
-      >
-        Back
-      </Button>
+      <Tooltip>
+        <TooltipTrigger render={<span className="inline-flex" />}>
+          <Button
+            type="button"
+            variant="outline"
+            className="min-h-11"
+            onClick={() => {
+              setStepPlaying(false);
+              stepBack();
+            }}
+            disabled={!backEnabled}
+            aria-label="Previous step"
+            title={backEnabled ? "Previous step" : "Already at the first step"}
+          >
+            Back
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {backEnabled ? "Previous step" : "Already at the first step"}
+        </TooltipContent>
+      </Tooltip>
 
       <p className="font-mono text-sm text-muted-foreground" aria-live="polite">
         Step {current} of {total}
@@ -75,18 +92,26 @@ export function StepControls() {
         >
           {stepPlaying ? "Pause" : "Play"}
         </Button>
-        <Button
-          type="button"
-          className="min-h-11"
-          onClick={() => {
-            setStepPlaying(false);
-            stepForward();
-          }}
-          disabled={!forwardEnabled}
-          aria-label="Next step"
-        >
-          Next
-        </Button>
+        <Tooltip>
+          <TooltipTrigger render={<span className="inline-flex" />}>
+            <Button
+              type="button"
+              className="min-h-11"
+              onClick={() => {
+                setStepPlaying(false);
+                stepForward();
+              }}
+              disabled={!forwardEnabled}
+              aria-label="Next step"
+              title={forwardEnabled ? "Next step" : "Already at the last step"}
+            >
+              Next
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {forwardEnabled ? "Next step" : "Already at the last step"}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );

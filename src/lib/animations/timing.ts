@@ -57,3 +57,15 @@ export function scanStepDuration(params: {
 
   return scaleDuration(BASE_DURATIONS.scanStep, speed);
 }
+
+export function stepAutoplayDelayMs(
+  speed: AnimationSpeed,
+  reducedMotion: boolean,
+): number {
+  return scanStepDuration({
+    count: 1,
+    speed,
+    reducedMotion,
+    simplify: false,
+  }) * 1000 + 420;
+}

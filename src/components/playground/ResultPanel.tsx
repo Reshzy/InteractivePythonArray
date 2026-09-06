@@ -5,6 +5,7 @@ import { getMethod } from "@/data/methods";
 import {
   buildResultAnnouncement,
   formatReturnValue,
+  shouldShowExactErrorMessage,
 } from "@/lib/playground/display";
 import { usePlaygroundStore } from "@/store/playground-store";
 
@@ -80,9 +81,11 @@ export function ResultPanel() {
               {lastResult.error.guidance}
             </p>
           ) : null}
-          <p className="font-mono text-xs text-muted-foreground">
-            {lastResult.error.message}
-          </p>
+          {shouldShowExactErrorMessage(lastResult.error) ? (
+            <p className="font-mono text-xs text-muted-foreground">
+              {lastResult.error.message}
+            </p>
+          ) : null}
         </div>
       ) : stepping && currentStep?.error ? (
         <p className="text-sm text-destructive">{currentStep.explanation}</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 import {
   gsap,
@@ -33,7 +34,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
   );
 }
 
-export function Playground() {
+export function Playground({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }) {
   const playgroundRef = useRef<HTMLElement>(null);
   const playback = useListPlayback(playgroundRef);
 
@@ -45,6 +46,10 @@ export function Playground() {
       usePlaygroundStore.getState().loadSharedState(parsed.snapshot);
       usePlaygroundStore.getState().setHasHydrated(true);
       return;
+    }
+
+    if (parsed.reason === "invalid") {
+      toast.error("Couldn't load that shared playground.");
     }
 
     void Promise.resolve(usePlaygroundStore.persist.rehydrate()).finally(() => {
@@ -136,7 +141,7 @@ export function Playground() {
         data-playground-shell
         className="mx-auto flex w-full max-w-6xl flex-col gap-6 rounded-2xl border border-border bg-card p-4 shadow-sm md:p-6"
       >
-        <PlaygroundToolbar />
+        <PlaygroundToolbar headingLevel={headingLevel} />
 
         <ListVisualizer
           displayList={playback.displayList}
@@ -152,14 +157,16 @@ export function Playground() {
         <StepControls />
 
         <div className="flex flex-col gap-4 lg:grid lg:grid-cols-2 lg:items-start">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 lg:col-start-2">
             <MethodNavigation />
             <MethodControls />
             <ResultPanel />
-            <HistoryPanel />
           </div>
-          <div className="order-last lg:order-first">
+          <div className="lg:col-start-1 lg:row-start-1">
             <CodePanel />
+          </div>
+          <div className="lg:col-start-2">
+            <HistoryPanel />
           </div>
         </div>
       </div>

@@ -1,8 +1,13 @@
 "use client";
 
-import { Redo2Icon, RotateCcwIcon, Share2Icon, Undo2Icon } from "lucide-react";
+import {
+  Redo2Icon,
+  RotateCcwIcon,
+  Share2Icon,
+  Undo2Icon,
+} from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +22,11 @@ import {
 } from "@/components/ui/select";
 import { Toggle } from "@/components/ui/toggle";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { getChallenge } from "@/data/challenges";
 import {
   ANIMATION_SPEED_OPTIONS,
@@ -30,11 +40,36 @@ import {
   usePlaygroundStore,
 } from "@/store/playground-store";
 
-export function PlaygroundToolbar() {
+const MODE_TOGGLE_CLASS =
+  "min-h-11 px-3 aria-pressed:border-primary aria-pressed:bg-secondary aria-pressed:text-foreground data-[state=on]:border-primary data-[state=on]:bg-secondary data-[state=on]:text-foreground";
+
+function ToolbarTip({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={<span className="inline-flex" />}>
+        {children}
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+export function PlaygroundToolbar({
+  headingLevel = "h2",
+}: {
+  headingLevel?: "h1" | "h2";
+}) {
+  const HeadingTag = headingLevel;
   const selectedPreset = usePlaygroundStore((state) => state.selectedPreset);
   const animationSpeed = usePlaygroundStore((state) => state.animationSpeed);
-  const history = usePlaygroundStore((state) => state.history);
-  const historyIndex = usePlaygroundStore((state) => state.historyIndex);
+  const undoEnabled = usePlaygroundStore((state) => canUndo(state));
+  const redoEnabled = usePlaygroundStore((state) => canRedo(state));
   const loadPreset = usePlaygroundStore((state) => state.loadPreset);
   const undo = usePlaygroundStore((state) => state.undo);
   const redo = usePlaygroundStore((state) => state.redo);
@@ -51,11 +86,11 @@ export function PlaygroundToolbar() {
   const setStepMode = usePlaygroundStore((state) => state.setStepMode);
   const [shareMessage, setShareMessage] = useState("");
 
-  const undoEnabled = canUndo({ historyIndex });
-  const redoEnabled = canRedo({ history, historyIndex });
   const activeChallenge = activeChallengeId
     ? getChallenge(activeChallengeId)
     : null;
+  const undoLabel = undoEnabled ? "Undo" : "Nothing to undo";
+  const redoLabel = redoEnabled ? "Redo" : "Nothing to redo";
 
   async function handleShare() {
     const state = usePlaygroundStore.getState();
@@ -71,14 +106,14 @@ export function PlaygroundToolbar() {
   }
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4">
       <div className="flex min-w-0 flex-col gap-2">
-        <h2
+        <HeadingTag
           id="playground-heading"
           className="text-xl font-medium tracking-tight"
         >
           Python List Playground
-        </h2>
+        </HeadingTag>
         {activeChallenge ? (
           <Link
             href="/#challenges"
@@ -96,122 +131,141 @@ export function PlaygroundToolbar() {
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <Select
-          items={PRESET_SELECT_ITEMS}
-          value={selectedPreset}
-          onValueChange={(value) => {
-            if (isPresetId(value)) {
-              loadPreset(value);
-            }
-          }}
-        >
-          <SelectTrigger
-            aria-label="List preset"
-            className="min-h-11 min-w-36"
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Select
+            items={PRESET_SELECT_ITEMS}
+            value={selectedPreset}
+            onValueChange={(value) => {
+              if (isPresetId(value)) {
+                loadPreset(value);
+              }
+            }}
           >
-            <SelectValue placeholder="Preset" />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            <SelectGroup>
-              {PRESET_SELECT_ITEMS.map((preset) => (
-                <SelectItem key={preset.value} value={preset.value}>
-                  {preset.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-
-        <Toggle
-          variant="outline"
-          pressed={xRayMode}
-          onPressedChange={setXRayMode}
-          className="min-h-11 px-3"
-          aria-label="X-Ray mode"
-        >
-          X-Ray
-        </Toggle>
-
-        <Toggle
-          variant="outline"
-          pressed={stepMode}
-          onPressedChange={setStepMode}
-          className="min-h-11 px-3"
-          aria-label="Step mode"
-        >
-          Step
-        </Toggle>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="min-h-11"
-          onClick={() => {
-            void handleShare();
-          }}
-          aria-label="Share playground"
-        >
-          <Share2Icon data-icon="inline-start" />
-          Share
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="min-h-11"
-          onClick={undo}
-          disabled={!undoEnabled}
-          aria-label="Undo"
-        >
-          <Undo2Icon data-icon="inline-start" />
-          Undo
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="min-h-11"
-          onClick={redo}
-          disabled={!redoEnabled}
-          aria-label="Redo"
-        >
-          <Redo2Icon data-icon="inline-start" />
-          Redo
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          className="min-h-11"
-          onClick={reset}
-          aria-label="Reset playground"
-        >
-          <RotateCcwIcon data-icon="inline-start" />
-          Reset
-        </Button>
-
-        <ToggleGroup
-          value={[String(animationSpeed)]}
-          onValueChange={(next) => {
-            const selected = Number(next[0]);
-            if (isAnimationSpeed(selected)) {
-              setAnimationSpeed(selected);
-            }
-          }}
-          className="min-h-11"
-          aria-label="Animation speed"
-        >
-          {ANIMATION_SPEED_OPTIONS.map((speed) => (
-            <ToggleGroupItem
-              key={speed.value}
-              value={String(speed.value)}
-              className="min-h-11 min-w-11 px-2.5 font-mono text-xs"
+            <SelectTrigger
+              aria-label="List preset"
+              className="min-h-11 min-w-36"
             >
-              {speed.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+              <SelectValue placeholder="Preset" />
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              <SelectGroup>
+                {PRESET_SELECT_ITEMS.map((preset) => (
+                  <SelectItem key={preset.value} value={preset.value}>
+                    {preset.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
+          <ToolbarTip label={xRayMode ? "Hide X-Ray" : "Show X-Ray"}>
+            <Toggle
+              variant="outline"
+              pressed={xRayMode}
+              onPressedChange={setXRayMode}
+              className={MODE_TOGGLE_CLASS}
+              aria-label="X-Ray mode"
+            >
+              X-Ray
+            </Toggle>
+          </ToolbarTip>
+
+          <ToolbarTip label={stepMode ? "Turn off Step mode" : "Turn on Step mode"}>
+            <Toggle
+              variant="outline"
+              pressed={stepMode}
+              onPressedChange={setStepMode}
+              className={MODE_TOGGLE_CLASS}
+              aria-label="Step mode"
+            >
+              Step
+            </Toggle>
+          </ToolbarTip>
+
+          <ToolbarTip label="Copy a shareable playground link">
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11"
+              onClick={() => {
+                void handleShare();
+              }}
+              aria-label="Share playground"
+            >
+              <Share2Icon data-icon="inline-start" />
+              Share
+            </Button>
+          </ToolbarTip>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <ToolbarTip label={undoLabel}>
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11"
+              onClick={undo}
+              disabled={!undoEnabled}
+              aria-label="Undo"
+              title={undoLabel}
+            >
+              <Undo2Icon data-icon="inline-start" />
+              <span className="hidden md:inline">Undo</span>
+            </Button>
+          </ToolbarTip>
+
+          <ToolbarTip label={redoLabel}>
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11"
+              onClick={redo}
+              disabled={!redoEnabled}
+              aria-label="Redo"
+              title={redoLabel}
+            >
+              <Redo2Icon data-icon="inline-start" />
+              <span className="hidden md:inline">Redo</span>
+            </Button>
+          </ToolbarTip>
+
+          <ToolbarTip label="Reset playground">
+            <Button
+              type="button"
+              variant="outline"
+              className="min-h-11"
+              onClick={reset}
+              aria-label="Reset playground"
+              title="Reset playground"
+            >
+              <RotateCcwIcon data-icon="inline-start" />
+              <span className="hidden md:inline">Reset</span>
+            </Button>
+          </ToolbarTip>
+
+          <ToggleGroup
+            value={[String(animationSpeed)]}
+            onValueChange={(next) => {
+              const selected = Number(next[0]);
+              if (isAnimationSpeed(selected)) {
+                setAnimationSpeed(selected);
+              }
+            }}
+            className="min-h-11 flex-wrap"
+            aria-label="Animation speed"
+          >
+            {ANIMATION_SPEED_OPTIONS.map((speed) => (
+              <ToggleGroupItem
+                key={speed.value}
+                value={String(speed.value)}
+                className="min-h-11 min-w-11 px-2.5 font-mono text-xs data-[state=on]:border-primary data-[state=on]:bg-secondary data-[state=on]:text-foreground"
+              >
+                {speed.label}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
       </div>
     </div>
   );

@@ -138,10 +138,10 @@ function XRayTrack({
       <XRayPointer name={name} />
       <div className="flex gap-3 overflow-x-auto">
         <div className="flex shrink-0 flex-col justify-center gap-8 pt-1">
-          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+          <p className="whitespace-nowrap text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
             Index
           </p>
-          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
+          <p className="whitespace-nowrap text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
             Value
           </p>
         </div>

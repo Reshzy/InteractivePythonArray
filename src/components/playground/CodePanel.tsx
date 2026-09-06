@@ -5,6 +5,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { buildPlaygroundSource } from "@/lib/playground/display";
 import { usePlaygroundStore } from "@/store/playground-store";
 
@@ -42,21 +47,30 @@ export function CodePanel() {
         <h3 id="code-panel-heading" className="text-sm font-medium">
           Python
         </h3>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="min-h-11"
-          onClick={handleCopy}
-          aria-label="Copy code"
-        >
-          {copied ? (
-            <CheckIcon data-icon="inline-start" />
-          ) : (
-            <CopyIcon data-icon="inline-start" />
-          )}
-          {copied ? "Copied" : "Copy"}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="min-h-11"
+                onClick={handleCopy}
+                aria-label="Copy code"
+              />
+            }
+          >
+            {copied ? (
+              <CheckIcon data-icon="inline-start" />
+            ) : (
+              <CopyIcon data-icon="inline-start" />
+            )}
+            {copied ? "Copied" : "Copy"}
+          </TooltipTrigger>
+          <TooltipContent>
+            {copied ? "Copied" : "Copy Python code"}
+          </TooltipContent>
+        </Tooltip>
       </div>
       <pre className="flex-1 overflow-x-auto p-4 font-mono text-sm leading-7">
         <code>{source}</code>
