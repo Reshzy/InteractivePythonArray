@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { CHALLENGES, getChallenge } from "@/data/challenges";
+import { evaluateChallenge } from "@/lib/challenges/evaluate";
 import { createDefaultArguments } from "@/lib/playground/arguments";
 import { pythonNumber, pythonString } from "@/lib/python/values";
 import {
@@ -233,6 +235,70 @@ describe("playground store", () => {
     expect(state.lastResult).toBeNull();
     expect(state.isAnimating).toBe(false);
     expect(state.history).toHaveLength(1);
+    expect(state.activeChallengeId).toBeNull();
+  });
+
+  it("loadChallenge sets the playground without running the engine", () => {
+    const store = createPlaygroundStore();
+    store.getState().executeOperation();
+    expect(store.getState().list).toHaveLength(4);
+
+    const challenge = getChallenge("remove-first-apple");
+    store.getState().loadChallenge(challenge);
+
+    const state = store.getState();
+    expect(state.activeChallengeId).toBe("remove-first-apple");
+    expect(state.selectedMethod).toBe("remove");
+    expect(state.variableName).toBe("fruit");
+    expect(state.list.map((item) => item.value)).toEqual([
+      pythonString("apple"),
+      pythonString("banana"),
+      pythonString("apple"),
+    ]);
+    expect(state.arguments.value).toEqual({
+      type: "string",
+      text: "apple",
+      booleanValue: true,
+    });
+    expect(state.lastResult).toBeNull();
+    expect(state.history).toEqual([]);
+    expect(state.isAnimating).toBe(false);
+  });
+
+  it("reset, presets, and tryMethod leave challenge mode", () => {
+    const store = createPlaygroundStore();
+    store.getState().loadChallenge(getChallenge("append-four"));
+    expect(store.getState().activeChallengeId).toBe("append-four");
+
+    store.getState().loadPreset("numbers");
+    expect(store.getState().activeChallengeId).toBeNull();
+
+    store.getState().loadChallenge(getChallenge("append-four"));
+    store.getState().tryMethod("len");
+    expect(store.getState().activeChallengeId).toBeNull();
+
+    store.getState().loadChallenge(getChallenge("append-four"));
+    store.getState().reset();
+    expect(store.getState().activeChallengeId).toBeNull();
+  });
+
+  it("solves every catalog challenge with one Run after loadChallenge", () => {
+    for (const challenge of CHALLENGES) {
+      const store = createPlaygroundStore();
+      store.getState().loadChallenge(challenge);
+      store.getState().executeOperation();
+
+      const state = store.getState();
+      expect(state.lastResult, challenge.id).toBeTruthy();
+      expect(state.lastResult?.error, challenge.id).toBeUndefined();
+
+      const verdict = evaluateChallenge(challenge, {
+        method: state.selectedMethod,
+        after: state.list,
+        result: state.lastResult!,
+      });
+      expect(verdict.status, challenge.id).toBe("correct");
+    }
   });
 
   it("allows undo during a mutation animation without replaying the method", () => {

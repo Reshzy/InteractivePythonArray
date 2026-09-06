@@ -2,6 +2,7 @@
 
 import { Redo2Icon, RotateCcwIcon, Undo2Icon } from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -12,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { getChallenge } from "@/data/challenges";
 import {
   ANIMATION_SPEED_OPTIONS,
   isAnimationSpeed,
@@ -35,18 +37,38 @@ export function PlaygroundToolbar() {
   const setAnimationSpeed = usePlaygroundStore(
     (state) => state.setAnimationSpeed,
   );
+  const activeChallengeId = usePlaygroundStore(
+    (state) => state.activeChallengeId,
+  );
 
   const undoEnabled = canUndo({ historyIndex });
   const redoEnabled = canRedo({ history, historyIndex });
+  const activeChallenge = activeChallengeId
+    ? getChallenge(activeChallengeId)
+    : null;
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-      <h2
-        id="playground-heading"
-        className="text-xl font-medium tracking-tight"
-      >
-        Python List Playground
-      </h2>
+      <div className="flex min-w-0 flex-col gap-2">
+        <h2
+          id="playground-heading"
+          className="text-xl font-medium tracking-tight"
+        >
+          Python List Playground
+        </h2>
+        {activeChallenge ? (
+          <a
+            href="#challenges"
+            className="inline-flex w-fit min-h-11 items-center gap-2 rounded-lg"
+            aria-label={`Practice challenge: ${activeChallenge.title}. Back to challenges.`}
+          >
+            <Badge>Practice</Badge>
+            <span className="truncate text-sm text-muted-foreground">
+              {activeChallenge.title}
+            </span>
+          </a>
+        ) : null}
+      </div>
 
       <div className="flex flex-wrap items-center gap-2">
         <Select

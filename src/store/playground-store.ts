@@ -3,6 +3,10 @@ import { persist } from "zustand/middleware";
 import { createStore, type StoreApi } from "zustand/vanilla";
 
 import {
+  type Challenge,
+  type ChallengeId,
+} from "@/data/challenges";
+import {
   DEFAULT_ANIMATION_SPEED,
   isAnimationSpeed,
   type AnimationSpeed,
@@ -74,6 +78,7 @@ export type PlaygroundState = {
   resultRevealed: boolean;
   playbackSessionId: number;
   playbackFrom: ListItem[] | null;
+  activeChallengeId: ChallengeId | null;
 };
 
 export type PersistedPlaygroundState = {
@@ -105,6 +110,7 @@ export type PlaygroundActions = {
   reset: () => void;
   loadPreset: (id: PresetId) => void;
   tryMethod: (method: MethodId, snapshot?: MethodTryIt) => void;
+  loadChallenge: (challenge: Challenge) => void;
   setAnimationSpeed: (animationSpeed: AnimationSpeed) => void;
   completePlayback: () => void;
   revealResult: () => void;
@@ -135,7 +141,16 @@ export function createDefaultPlaygroundState(): PlaygroundState {
     resultRevealed: true,
     playbackSessionId: 0,
     playbackFrom: null,
+    activeChallengeId: null,
   };
+}
+
+function challengeMethod(challenge: Challenge): MethodId {
+  return (
+    challenge.expectedMethod ??
+    challenge.allowedMethods?.[0] ??
+    "append"
+  );
 }
 
 function startPlaybackSession(
@@ -446,6 +461,7 @@ export function createPlaygroundApi(
         history: [],
         historyIndex: -1,
         arguments: argumentsForMethod(state.selectedMethod, state.arguments),
+        activeChallengeId: null,
         ...startPlaybackSession(state, "preset", true, state.list),
       });
     },
@@ -461,6 +477,29 @@ export function createPlaygroundApi(
         arguments: argumentsFromTryIt(method, tryIt),
         lastResult: null,
         selectedPreset: null,
+        activeChallengeId: null,
+        isAnimating: false,
+        playbackKind: "idle",
+        resultRevealed: true,
+        playbackFrom: null,
+        playbackSessionId: state.playbackSessionId + 1,
+      });
+    },
+
+    loadChallenge: (challenge) => {
+      const state = get();
+      const method = challengeMethod(challenge);
+
+      set({
+        selectedMethod: method,
+        variableName: challenge.variableName,
+        list: createList(challenge.initialList),
+        arguments: argumentsFromTryIt(method, challenge.setup),
+        lastResult: null,
+        selectedPreset: null,
+        history: [],
+        historyIndex: -1,
+        activeChallengeId: challenge.id,
         isAnimating: false,
         playbackKind: "idle",
         resultRevealed: true,

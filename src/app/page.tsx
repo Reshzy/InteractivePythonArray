@@ -1,4 +1,4 @@
-import { ChallengesPlaceholder } from "@/components/challenges/ChallengesPlaceholder";
+import { ChallengesSection } from "@/components/challenges/ChallengesSection";
 import { ComparisonsPreview } from "@/components/comparisons/ComparisonsPreview";
 import { Hero } from "@/components/hero/Hero";
 import { MethodsPreview } from "@/components/methods/MethodsPreview";
@@ -11,7 +11,7 @@ export default function Home() {
       <Playground />
       <MethodsPreview />
       <ComparisonsPreview />
-      <ChallengesPlaceholder />
+      <ChallengesSection />
     </main>
   );
 }
